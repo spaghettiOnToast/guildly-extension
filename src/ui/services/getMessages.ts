@@ -1,0 +1,20 @@
+import { sendMessage, waitForMessage } from "../../shared/messages";
+
+export const getInstalledWallets = async () => {
+  sendMessage({ type: "GET_INSTALLED_WALLETS" });
+  return waitForMessage("INSTALLED_WALLETS_RES");
+};
+
+export const connectWallet = async (msg) => {
+  sendMessage({ type: "CONNECT_WALLET", data: msg.data });
+  console.log(waitForMessage("CONNECTED_WALLET_RES"));
+  return waitForMessage("CONNECTED_WALLET_RES");
+};
+
+export const getWallet = async () => {
+  return waitForMessage("CONNECTED_WALLET_RES");
+};
+
+export const exposeGuild = async (msg) => {
+  sendMessage({ type: "CONNECTED_GUILD", data: msg });
+};
