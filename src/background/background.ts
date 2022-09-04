@@ -4,12 +4,12 @@ import { ActionItem } from "../shared/actionQueue/types";
 import { MessageType } from "../shared/messages";
 import { Queue } from "./actionQueue";
 import { MessagingKeys } from "./keys/messagingKeys";
-import { TransactionTracker } from "./transactions/tracking";
+// import { TransactionTracker } from "./transactions/tracking";
 import { Guild } from "./guild";
 
 export interface BackgroundService {
   guild: Guild;
-  transactionTracker: TransactionTracker;
+  // transactionTracker: TransactionTracker;
   actionQueue: Queue<ActionItem>;
 }
 

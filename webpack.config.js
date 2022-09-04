@@ -1,6 +1,7 @@
 const path = require('path');
 const HtmlWebPackPlugin = require("html-webpack-plugin")
 const CopyPlugin = require("copy-webpack-plugin")
+const Dotenv = require("dotenv-webpack")
 const { DefinePlugin, ProvidePlugin } = require("webpack")
 
 const htmlPlugin = new HtmlWebPackPlugin({
@@ -45,6 +46,10 @@ module.exports = {
         new ProvidePlugin({
           Buffer: ["buffer", "Buffer"],
           React: "react",
+        }),
+        new Dotenv({
+          systemvars: true,
+          safe: false,
         }),
     ],
     resolve: {

@@ -54,6 +54,7 @@ const extensionId = document
 
 window.addEventListener("message", async (event: any) => {
   if (event.data.type === "GET_INSTALLED_WALLETS_RES") {
+    console.log("hey");
     const starknetWindows = await getInstalledWallets();
     const wallets = [];
     for (var i = 0; i < starknetWindows.length; i++) {

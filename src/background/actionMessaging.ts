@@ -4,11 +4,11 @@ import { HandleMessage } from "./background";
 
 export const handleActionMessage: any = async ({
   msg,
+  sender,
   background,
   sendToTabAndUi,
 }) => {
   const { actionQueue } = background;
-  console.log(actionQueue);
 
   switch (msg.type) {
     case "GET_ACTIONS": {

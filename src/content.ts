@@ -12,6 +12,7 @@ script.setAttribute("data-extension-id", guildlyExtensionId);
 container.insertBefore(script, container.children[0]);
 
 chrome.runtime.onMessage.addListener((obj, sender, response) => {
+  // console.log(obj);
   window.postMessage(
     { ...obj, forwarded: true, extensionId: guildlyExtensionId },
     window.location.origin
@@ -29,6 +30,7 @@ window.addEventListener("message", function (event: any) {
 });
 
 messageStream.subscribe(([msg]: any) => {
+  // console.log(msg);
   window.postMessage(
     { ...msg, forwarded: true, extensionId: guildlyExtensionId },
     window.location.origin

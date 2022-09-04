@@ -5,28 +5,16 @@ import { accountStore, storeAccount } from "../shared/storage/accounts";
 import { storeAction, actionStore } from "../shared/storage/actionStore";
 import { globalActionQueueStore } from "../shared/actionQueue/store";
 import { HandleMessage, UnhandledMessage } from "./background";
+import { sendMessageToCurrentTab } from "./activeTabs";
 import { openUi } from "./openUi";
-
-export async function sendMessageToUi(message: any) {
-  await Promise.allSettled([sendMessage(message)]);
-}
-
-export async function sendMessageToActiveTabs(message: MessageType) {
-  const activeTab = await getActiveTabURL();
-  chrome.tabs.sendMessage(activeTab.id, message);
-}
-
-export async function sendMessageToActiveTabsAndUi(message: MessageType) {
-  await sendMessageToUi(message);
-  await sendMessageToActiveTabs(message);
-}
 
 export const handleMessage: any = async ({
   msg,
   sender,
-  actionQueue,
+  background,
   sendToTabAndUi,
 }) => {
+  const { actionQueue } = background;
   switch (msg.type) {
     case "INSTALLED_WALLETS": {
       return sendToTabAndUi({
@@ -35,7 +23,7 @@ export const handleMessage: any = async ({
       });
     }
     case "GET_INSTALLED_WALLETS": {
-      return sendToTabAndUi({ type: "GET_INSTALLED_WALLETS_RES" });
+      return sendMessageToCurrentTab({ type: "GET_INSTALLED_WALLETS_RES" });
     }
     case "CONNECT_WALLET": {
       return sendToTabAndUi({ type: "CONNECT_WALLET_RES", data: msg.data });

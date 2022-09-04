@@ -2,9 +2,10 @@ import { getMessage } from "@extend-chrome/messages";
 
 import { SessionMessage } from "./SessionMessage";
 import { MiscenalleousMessage } from "./MiscellaneousMessage";
+import { PreAuthorisationMessage } from "./PreAuthorisationMessage";
 
 export const [sendMessage, messageStream, _waitForMessage] =
-  getMessage("GUILDLY");
+  getMessage<MessageType>("GUILDLY");
 
 type WalletsMessage =
   | { type: "INSTALLED_WALLETS_RES"; data: any }
@@ -16,14 +17,16 @@ type WalletsMessage =
   | { type: "IS_PREAUTHORIZED"; data: any }
   | { type: "EXECUTE_TRANSACTION"; data: any }
   | { type: "EXECUTE_TRANSACTION_RES"; data: any }
-  | { type: "CONNECT_DAPP"; data: any }
-  | { type: "CONNECT_DAPP_RES"; data: any }
   | { type: "GET_ACTIONS_RES"; data: any }
   | { type: "SIGN_MESSAGE_RES"; data: any }
   | { type: "CONNECT_ACCOUNT_RES"; data: any }
-  | { type: "GET_NETWORK_STATUSES_RES"; data: any };
+  | { type: "GET_NETWORK_STATUSES_RES"; data: any }
+  | { type: "DISCONNECT_ACCOUNT" };
 
-export type MessageType = WalletsMessage | SessionMessage;
+export type MessageType =
+  | WalletsMessage
+  | SessionMessage
+  | PreAuthorisationMessage;
 
 export type WindowMessageType = MessageType & {
   forwarded?: boolean;

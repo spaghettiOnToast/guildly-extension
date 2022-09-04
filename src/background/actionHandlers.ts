@@ -16,17 +16,13 @@ export const handleActionApproval = async (
 
   switch (action.type) {
     case "CONNECT_DAPP": {
-      console.log("hello");
       const { host } = action.payload;
       const selectedAccount = await guild.getSelectedAccount();
-      console.log(selectedAccount);
 
       if (!selectedAccount) {
         openUi();
         return;
       }
-
-      console.log(`You have selected ${selectedAccount}`);
 
       analytics.track("preauthorizeDapp", {
         host,
