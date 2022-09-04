@@ -10,7 +10,7 @@ import { accountStore } from "../../../shared/account/store";
 import { defaultNetwork } from "../../../shared/network";
 import { useArrayStorage } from "../../../shared/storage/hooks";
 import { BaseGuildAccount, GuildAccount } from "../../../shared/guild.model";
-import { accountsEqual } from "../../../shared/wallet.service";
+import { accountsEqual } from "../../../shared/guild.service";
 import { useCurrentNetwork } from "../networks/useNetworks";
 import { Account } from "./Account";
 

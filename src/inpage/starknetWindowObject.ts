@@ -1,13 +1,14 @@
 import { assertNever } from "./../ui/services/assertNever";
 import { getProvider } from "../shared/network/provider";
-// import type {
-//   AccountChangeEventHandler,
-//   NetworkChangeEventHandler,
-//   StarknetWindowObject,
-//   WalletEvents,
-// } from "./inpage.model";
+import type {
+  AccountChangeEventHandler,
+  NetworkChangeEventHandler,
+  StarknetWindowObject,
+  WalletEvents,
+} from "./inpage.model";
 import { sendMessage, waitForMessage } from "../shared/messageActions";
 import { getIsPreauthorized } from "./preAuthorization";
+import { GuildAccount } from "./GuildAccount";
 
 // const VERSION = `${process.env.VERSION}`;
 
@@ -35,7 +36,7 @@ export const starknetWindowObject: any = {
     // throw Error("Not implemented");
   },
   enable: async ({ starknetVersion = "v3" } = {}) => {
-    const network = Promise.race([
+    const guildAccountP = Promise.race([
       waitForMessage("CONNECT_DAPP_RES", 10 * 60 * 1000),
       waitForMessage("START_SESSION_RES", 10 * 60 * 1000, (x) =>
         Boolean(x.data)
@@ -50,13 +51,17 @@ export const starknetWindowObject: any = {
       throw Error("No starknet object detected");
     }
 
+    const guildAccount = await guildAccountP;
+
+    const { address, network } = guildAccount;
+
     const provider = getProvider(network);
     starknet.starknetJsVersion = "v4";
     starknet.provider = provider;
 
     starknet.chainId = network.chainId;
     starknet.isConnected = true;
-    starknet.account = new ArgentXAccount(address, provider);
+    starknet.account = new GuildAccount(address, provider);
 
     return [];
   },

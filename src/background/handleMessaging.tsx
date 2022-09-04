@@ -4,6 +4,7 @@ import { getActiveTabURL } from "../common/Utils";
 import { accountStore, storeAccount } from "../shared/storage/accounts";
 import { storeAction, actionStore } from "../shared/storage/actionStore";
 import { globalActionQueueStore } from "../shared/actionQueue/store";
+import { HandleMessage, UnhandledMessage } from "./background";
 import { openUi } from "./openUi";
 
 export async function sendMessageToUi(message: any) {
@@ -56,4 +57,6 @@ export const handleMessage: any = async ({
       await openUi();
     }
   }
+
+  throw new UnhandledMessage();
 };

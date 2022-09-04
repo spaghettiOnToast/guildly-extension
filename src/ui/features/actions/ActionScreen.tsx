@@ -1,4 +1,6 @@
 import { FC, useCallback } from "react";
+
+import { waitForMessage } from "../../../shared/messages";
 import { ApproveTransaction } from "./ApproveTransaction";
 import { actionStore } from "../../../shared/storage/actionStore";
 import { useActions } from "./action.state";
@@ -6,7 +8,10 @@ import { approveAction, rejectAction } from "../../services/backgroundActions";
 import { EXTENSION_IS_POPUP } from "../browser/constants";
 import { useAppState } from "../../app.state";
 import { useSelectedAccountStore } from "../accounts/accounts.state";
+import { Account } from "../accounts/Account";
 import { connectAccount } from "../../services/backgroundAccounts";
+import { ConnectDappScreen } from "./ConnectDappScreen";
+import { removePreAuthorization } from "../../../shared/preAuthorizations";
 
 export const ActionScreen: FC = () => {
   const actions = useActions();

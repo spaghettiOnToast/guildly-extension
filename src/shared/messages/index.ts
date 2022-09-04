@@ -19,7 +19,9 @@ type WalletsMessage =
   | { type: "CONNECT_DAPP"; data: any }
   | { type: "CONNECT_DAPP_RES"; data: any }
   | { type: "GET_ACTIONS_RES"; data: any }
-  | { type: "SIGN_MESSAGE_RES"; data: any };
+  | { type: "SIGN_MESSAGE_RES"; data: any }
+  | { type: "CONNECT_ACCOUNT_RES"; data: any }
+  | { type: "GET_NETWORK_STATUSES_RES"; data: any };
 
 export type MessageType = WalletsMessage | SessionMessage;
 

@@ -13,6 +13,7 @@ import { Header } from "../../components/Header";
 import { BackButton } from "../../components/BackButton";
 import { storeAccount } from "../../../shared/storage/accounts";
 import Spinner from "../../components/spinner";
+import { Account } from "../accounts/Account";
 
 const SelectWalletWrapper = styled.div`
   padding: 40px 40px 24px;
@@ -51,8 +52,8 @@ const LoadingIcon = styled.div`
 `;
 
 export const ConnectDappScreen: FC = (
-  onConnect: (selectedAccount: Account) => void
-  onDisconnect: (selectedAccount: Account) => void
+  onConnect: (selectedAccount: Account) => void,
+  onDisconnect: (selectedAccount: Account) => void,
   host: string
 ) => {
   const navigate = useNavigate();

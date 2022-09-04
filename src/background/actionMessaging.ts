@@ -2,12 +2,13 @@ import { handleActionApproval, handleActionRejection } from "./actionHandlers";
 import { UnhandledMessage } from "./background";
 import { HandleMessage } from "./background";
 
-export const handleActionMessage: HandleMessage<any> = async ({
+export const handleActionMessage: any = async ({
   msg,
   background,
   sendToTabAndUi,
 }) => {
   const { actionQueue } = background;
+  console.log(actionQueue);
 
   switch (msg.type) {
     case "GET_ACTIONS": {

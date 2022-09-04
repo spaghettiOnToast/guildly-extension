@@ -19,4 +19,4 @@ export interface GuildAccount extends BaseGuildAccount, WithSigner {
   hidden?: boolean;
 }
 
-export type StoredWalletAccount = Omit<GuildAccount, "network">;
+export type StoredGuildAccount = Omit<GuildAccount, "network">;
