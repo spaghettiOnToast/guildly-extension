@@ -31,7 +31,7 @@ export const handleActionApproval = async (
 
       await preAuthorize(selectedAccount, host);
 
-      return { type: "CONNECT_DAPP_RES", data: selectedAccount };
+      return { type: "CONNECT_GUILD_RES", data: selectedAccount };
     }
 
     case "TRANSACTION": {

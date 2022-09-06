@@ -48,7 +48,6 @@ const GUILD_CONTRACT_CLASS_HASHES = [
 
 export interface WalletSession {
   secret: string;
-  password: string;
 }
 
 export interface WalletStorageProps {
@@ -85,24 +84,15 @@ export class Guild {
     return (await this.sessionStore.get()) !== null;
   }
 
-  private async generateNewLocalSecret(
-    password: string,
-    progressCallback?: ProgressCallback
-  ) {
+  private async generateNewLocalSecret(progressCallback?: ProgressCallback) {
     if (await this.isInitialized()) {
       return;
     }
     const N = isDevOrTest ? 64 : 32768;
     const ethersWallet = ethers.Wallet.createRandom();
-    const encryptedBackup = await ethersWallet.encrypt(
-      password,
-      { scrypt: { N } },
-      progressCallback
-    );
 
-    await this.store.set("discoveredOnce", true);
-    await this.store.set("backup", encryptedBackup);
-    return this.setSession(ethersWallet.privateKey, password);
+    // return this.setSession(ethersWallet.privateKey);
+    return this.setSession("123");
   }
 
   public async getSeedPhrase(): Promise<string> {
@@ -113,10 +103,7 @@ export class Guild {
       throw new Error("Session is not open");
     }
 
-    const wallet = await ethers.Wallet.fromEncryptedJson(
-      backup,
-      session.password
-    );
+    const wallet = await ethers.Wallet.fromEncryptedJson(session.password);
 
     return wallet.mnemonic.phrase;
   }
@@ -223,7 +210,6 @@ export class Guild {
   }
 
   public async startSession(
-    password: string,
     progressCallback?: ProgressCallback
   ): Promise<boolean> {
     // session has already started
@@ -234,30 +220,12 @@ export class Guild {
 
     // wallet is not initialized: let's initialise it
     if (!(await this.isInitialized())) {
-      await this.generateNewLocalSecret(password, progressCallback);
+      await this.generateNewLocalSecret(progressCallback);
       return true;
     }
 
-    const backup = await this.store.get("backup");
-
-    if (!backup) {
-      throw new Error("Backup is not found");
-    }
-
     try {
-      const wallet = await ethers.Wallet.fromEncryptedJson(
-        backup,
-        password,
-        progressCallback
-      );
-
-      await this.setSession(wallet.privateKey, password);
-
-      // if we have not yet discovered accounts, do it now. This only applies to wallets which got restored from a backup file, as we could not restore all accounts from onchain yet as the backup was locked until now.
-      const discoveredOnce = await this.store.get("discoveredOnce");
-      if (!discoveredOnce) {
-        await this.discoverAccounts();
-      }
+      await this.setSession("123");
 
       return true;
     } catch {
@@ -376,8 +344,8 @@ export class Guild {
     await this.sessionStore.set(this.sessionStore.defaults);
   }
 
-  private async setSession(secret: string, password: string) {
-    await this.sessionStore.set({ secret, password });
+  private async setSession(secret: string) {
+    await this.sessionStore.set({ secret });
 
     browser.alarms.onAlarm.addListener(async (alarm) => {
       if (alarm.name === "session_timeout") {

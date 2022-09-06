@@ -1,7 +1,7 @@
-import { SequencerProvider } from "starknet"
+import { Provider } from "starknet";
 
-import { Network } from "./type"
+import { Network } from "./type";
 
-export function getProvider(network: Network) {
-  return new SequencerProvider({ baseUrl: network.baseUrl })
+export function getProvider(url: any) {
+  return new Provider({ baseUrl: url });
 }

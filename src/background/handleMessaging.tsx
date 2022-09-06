@@ -7,6 +7,7 @@ import { globalActionQueueStore } from "../shared/actionQueue/store";
 import { HandleMessage, UnhandledMessage } from "./background";
 import { sendMessageToCurrentTab } from "./activeTabs";
 import { openUi } from "./openUi";
+import { addTab } from "./activeTabs";
 
 export const handleMessage: any = async ({
   msg,
@@ -23,7 +24,7 @@ export const handleMessage: any = async ({
       });
     }
     case "GET_INSTALLED_WALLETS": {
-      return sendMessageToCurrentTab({ type: "GET_INSTALLED_WALLETS_RES" });
+      return sendToTabAndUi({ type: "GET_INSTALLED_WALLETS_RES" });
     }
     case "CONNECT_WALLET": {
       return sendToTabAndUi({ type: "CONNECT_WALLET_RES", data: msg.data });

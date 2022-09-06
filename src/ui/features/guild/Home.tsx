@@ -9,6 +9,7 @@ import { accountStore } from "../../../shared/storage/accounts";
 import { guildStore } from "../../../shared/storage/guilds";
 import { useDisplayName } from "../../utils/address";
 import { toBN } from "starknet/dist/utils/number";
+import { ProfilePicture } from "./ProfilePicture";
 import { getImage } from "../getImage";
 
 const HomeWrapper = styled.div`
@@ -35,8 +36,15 @@ export const Home: FC = () => {
         </Link>
       </Header>
       <HomeWrapper>
-        <H2>Wallet {useDisplayName(accountStore[0].account.address)}</H2>
-        <P>Connected to guild {useDisplayName(guildStore[0])}</P>
+        <H2>
+          Wallet{" "}
+          {useDisplayName(
+            accountStore[accountStore.length - 1].account.address
+          )}
+        </H2>
+        <P>
+          Connected to guild {useDisplayName(guildStore[0].account.address)}
+        </P>
       </HomeWrapper>
     </>
   );

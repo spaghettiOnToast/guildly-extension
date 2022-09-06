@@ -6,8 +6,7 @@ export const getInstalledWallets = async () => {
 };
 
 export const connectWallet = async (msg) => {
-  sendMessage({ type: "CONNECT_WALLET", data: msg.data });
-  console.log(waitForMessage("CONNECTED_WALLET_RES"));
+  sendMessage({ type: "CONNECT_WALLET", data: msg });
   return waitForMessage("CONNECTED_WALLET_RES");
 };
 

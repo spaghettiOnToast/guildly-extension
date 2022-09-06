@@ -1,5 +1,6 @@
 import { assertNever } from "./../ui/services/assertNever";
 import { getProvider } from "../shared/network/provider";
+import { getInstalledWallets } from "get-starknet";
 import type {
   AccountChangeEventHandler,
   NetworkChangeEventHandler,
@@ -9,10 +10,13 @@ import type {
 import { sendMessage, waitForMessage } from "../shared/messageActions";
 import { getIsPreauthorized } from "./preAuthorization";
 import { GuildAccount } from "./GuildAccount";
+import { GuildAccount3, getProvider3 } from "./GuildAccount3";
+import { guildStore } from "../shared/storage/guilds";
+import { truncate } from "lodash-es";
 
-// const VERSION = `${process.env.VERSION}`;
+const VERSION = `${process.env.VERSION}`;
 
-// export const userEventHandlers: WalletEvents[] = [];
+export const userEventHandlers: WalletEvents[] = [];
 
 // window.ethereum like
 export const starknetWindowObject: any = {
@@ -24,7 +28,7 @@ export const starknetWindowObject: any = {
   selectedAddress: undefined,
   chainId: undefined,
   isConnected: false,
-  version: 0,
+  version: VERSION,
   request: async (call) => {
     // if (call.type === "wallet_watchAsset" && call.params.type === "ERC20") {
     //   return await handleAddTokenRequest(call.params);
@@ -36,8 +40,9 @@ export const starknetWindowObject: any = {
     // throw Error("Not implemented");
   },
   enable: async ({ starknetVersion = "v3" } = {}) => {
+    const { starknet_guildly } = window;
     const guildAccountP = Promise.race([
-      waitForMessage("CONNECT_DAPP_RES", 10 * 60 * 1000),
+      waitForMessage("CONNECT_GUILD_RES", 10 * 60 * 1000),
       waitForMessage("START_SESSION_RES", 10 * 60 * 1000, (x) =>
         Boolean(x.data)
       ),
@@ -46,24 +51,51 @@ export const starknetWindowObject: any = {
       type: "CONNECT_DAPP",
       data: { host: window.location.host },
     });
-    const { starknet } = window;
-    if (!starknet) {
+    if (!starknet_guildly) {
       throw Error("No starknet object detected");
     }
 
     const guildAccount = await guildAccountP;
 
-    const { address, network } = guildAccount;
+    if (!guildAccount) {
+      throw Error("No wallet account (should not be possible)");
+    }
 
-    const provider = getProvider(network);
-    starknet.starknetJsVersion = "v4";
-    starknet.provider = provider;
+    // const { address, network } = guildAccount;
 
-    starknet.chainId = network.chainId;
-    starknet.isConnected = true;
-    starknet.account = new GuildAccount(address, provider);
+    if (starknetVersion === "v4") {
+      const provider = getProvider(guildAccount.provider.baseUrl);
+      starknet_guildly.starknetJsVersion = "v4";
+      starknet_guildly.provider = provider;
+      starknet_guildly.account = new GuildAccount(
+        guildAccount.account.address,
+        provider
+      );
+    } else {
+      const provider = getProvider(guildAccount.provider.baseUrl);
+      starknet_guildly.starknetJsVersion = "v3";
+      starknet_guildly.provider = provider;
+      starknet_guildly.account = new GuildAccount(
+        guildAccount.account.address,
+        provider
+      );
+    }
+    starknet_guildly.selectedAddress = guildAccount.account.address;
+    starknet_guildly.chainId = guildAccount.chainId;
+    starknet_guildly.isConnected = true;
 
-    return [];
+    const installedWallets = await getInstalledWallets();
+    const currentWallet = installedWallets.find((obj) => {
+      return obj.id === "argentX";
+    });
+
+    if (currentWallet?.account?.signer) {
+      starknet_guildly.account.signer = currentWallet.account.signer;
+    }
+
+    console.log(starknet_guildly);
+
+    return [starknet_guildly.account?.address];
   },
   isPreauthorized: async () => {
     // return getIsPreauthorized();

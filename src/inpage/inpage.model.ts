@@ -1,4 +1,4 @@
-import type { ProviderInterface } from "starknet";
+import type { AccountInterface, ProviderInterface } from "starknet";
 
 export type AccountChangeEventHandler = (accounts: string[]) => void;
 
@@ -79,14 +79,6 @@ export type RpcMessage =
 
 type StarknetJsVersion = "v3" | "v4";
 
-export interface AccountInterface {
-  address: string;
-  baseUrl: string;
-  chainId: string;
-  feederGatewayUrl: string;
-  gatewayUrl: string;
-}
-
 export interface InstalledWalletObject {
   id: string;
   name: string;
@@ -165,6 +157,6 @@ export type StarknetWindowObject =
 
 declare global {
   interface Window {
-    starknet?: StarknetWindowObject;
+    starknet_guildly?: StarknetWindowObject;
   }
 }

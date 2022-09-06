@@ -7,17 +7,18 @@ import { HandleMessage } from "./background";
 
 export const handleSessionMessage: HandleMessage<SessionMessage> = async ({
   msg,
-  background: { wallet },
+  background: { guild },
   messagingKeys: { privateKey },
   sendToTabAndUi,
 }) => {
   switch (msg.type) {
     case "START_SESSION": {
-      const result = await wallet.startSession(sessionPassword, (percent) => {
+      const result = await guild.startSession((percent) => {
         sendToTabAndUi({ type: "LOADING_PROGRESS", data: percent });
       });
       if (result) {
-        const selectedAccount = await wallet.getSelectedAccount();
+        const selectedAccount = await guild.getSelectedAccount();
+        console.log(selectedAccount);
         return sendToTabAndUi({
           type: "START_SESSION_RES",
           data: selectedAccount,

@@ -13,6 +13,7 @@ import { Header } from "../../components/Header";
 import { BackButton } from "../../components/BackButton";
 import { storeAccount } from "../../../shared/storage/accounts";
 import Spinner from "../../components/spinner";
+import { approveAction, rejectAction } from "../../services/backgroundActions";
 
 const SelectWalletWrapper = styled.div`
   padding: 40px 40px 24px;
@@ -57,7 +58,6 @@ export const SelectWallet: FC = () => {
   const [executedConnectWallet, setExecutedConnectWallet] = useState(false);
 
   const [wallets, setWallets] = useState(null);
-  const [currentWallet, setCurrentWallet] = useState(null);
 
   if (!executedGetWallets) {
     const getWallets = async () => {
@@ -75,14 +75,6 @@ export const SelectWallet: FC = () => {
     setExecutedGetWallets(true);
   }
 
-  const connectWallet = async (wallet) => {
-    const currentWallet = await connectWallet(wallet).then((msg) => {
-      return msg.data;
-    });
-    console.log(currentWallet);
-    return setCurrentWallet(currentWallet);
-  };
-
   return (
     <>
       <Header>
@@ -96,7 +88,7 @@ export const SelectWallet: FC = () => {
               <WalletButton
                 key={key}
                 onClick={async () => {
-                  await connectWallet(wallet);
+                  const currentWallet = await connectWallet(wallet);
                   storeAccount(currentWallet);
                   navigate(routes.selectGuilds());
                 }}

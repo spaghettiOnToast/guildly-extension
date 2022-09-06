@@ -11,6 +11,7 @@ type WalletsMessage =
   | { type: "INSTALLED_WALLETS_RES"; data: any }
   | { type: "GET_INSTALLED_WALLETS_RES" }
   | { type: "GET_INSTALLED_WALLETS" }
+  | { type: "CONNECT_WALLET"; data: any }
   | { type: "CONNECTED_WALLET_RES"; data: any }
   | { type: "EXECUTED_TRANSACTION"; data: any }
   | { type: "OPEN_UI" }
@@ -21,7 +22,14 @@ type WalletsMessage =
   | { type: "SIGN_MESSAGE_RES"; data: any }
   | { type: "CONNECT_ACCOUNT_RES"; data: any }
   | { type: "GET_NETWORK_STATUSES_RES"; data: any }
-  | { type: "DISCONNECT_ACCOUNT" };
+  | { type: "DISCONNECT_ACCOUNT" }
+  | { type: "CONNECTED_GUILD"; data: any }
+  | { type: "CONNECT_ACCOUNT"; data: any }
+  | { type: "GET_ACCOUNTS_RES"; data: any }
+  | { type: "GET_SELECTED_ACCOUNT_RES"; data: any }
+  | { type: "LOADING_PROGRESS"; data: any }
+  | { type: "CONNECT_GUILD_RES"; data: any }
+  | { type: "CONNECT_GUILD"; data: any };
 
 export type MessageType =
   | WalletsMessage

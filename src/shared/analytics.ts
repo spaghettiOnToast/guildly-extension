@@ -1,78 +1,78 @@
-import { base64 } from "ethers/lib/utils"
-import { encode } from "starknet"
-import browser from "webextension-polyfill"
-import create from "zustand"
-import { persist } from "zustand/middleware"
+import { base64 } from "ethers/lib/utils";
+import { encode } from "starknet";
+import browser from "webextension-polyfill";
+import create from "zustand";
+import { persist } from "zustand/middleware";
 
-const SEGMENT_TRACK_URL = "https://api.segment.io/v1/track"
-const SEGMENT_PAGE_URL = "https://api.segment.io/v1/page"
+const SEGMENT_TRACK_URL = "https://api.segment.io/v1/track";
+const SEGMENT_PAGE_URL = "https://api.segment.io/v1/page";
 
 // dont use destructuring here
-const SEGMENT_WRITE_KEY = process.env.SEGMENT_WRITE_KEY
-const VERSION = process.env.VERSION
+const SEGMENT_WRITE_KEY = process.env.SEGMENT_WRITE_KEY;
+const VERSION = process.env.VERSION;
 
 export type AddFundsServices =
   | "banxa"
   | "layerswap"
   | "starkgate"
   | "orbiter"
-  | "ramp"
+  | "ramp";
 
 export interface Events {
-  sessionStart: undefined
+  sessionStart: undefined;
   sessionEnded: {
-    length: number
-  }
-  openedExtensionToday: undefined
-  unlockedExtensionToday: undefined
-  unlockedExtensionWeekly: undefined
-  unlockedExtensionMonthly: undefined
+    length: number;
+  };
+  openedExtensionToday: undefined;
+  unlockedExtensionToday: undefined;
+  unlockedExtensionWeekly: undefined;
+  unlockedExtensionMonthly: undefined;
   createWallet:
     | {
-        status: "success"
-        networkId: string
+        status: "success";
+        networkId: string;
       }
     | {
-        status: "failure"
-        errorMessage: string
-        networkId: string
-      }
+        status: "failure";
+        errorMessage: string;
+        networkId: string;
+      };
   preauthorizeDapp: {
-    host: string
-    networkId: string
-  }
+    host: string;
+    networkId: string;
+  };
   signedTransaction: {
-    networkId: string
-  }
+    networkId: string;
+  };
   sentTransaction: {
-    success: boolean
-    networkId: string
-  }
+    success: boolean;
+    networkId: string;
+  };
   signedMessage: {
-    networkId: string
-  }
+    networkId: string;
+  };
   addFunds: {
-    networkId: string
-    service: AddFundsServices
-  }
+    networkId: string;
+    service: AddFundsServices;
+  };
 }
 
 export interface Pages {
-  welcome: undefined
-  disclaimer: undefined
-  createWallet: undefined
-  restoreWallet: undefined
-  restoreWalletWithFile: undefined
-  signMessage: undefined
+  welcome: undefined;
+  disclaimer: undefined;
+  createWallet: undefined;
+  restoreWallet: undefined;
+  restoreWalletWithFile: undefined;
+  signMessage: undefined;
   signTransaction: {
-    networkId: string
-  }
+    networkId: string;
+  };
   addFunds: {
-    networkId: string
-  }
+    networkId: string;
+  };
   addFundsFromOtherAccount: {
-    networkId: string
-  }
+    networkId: string;
+  };
 }
 
 interface Analytics {
@@ -81,50 +81,50 @@ interface Analytics {
     ...rest: Events[T] extends undefined // makes sure that the argument is optional if the event is not defined
       ? [data?: Events[T]]
       : [data: Events[T]]
-  ): Promise<unknown>
+  ): Promise<unknown>;
   page<T extends keyof Pages>(
     name: T,
     ...rest: Pages[T] extends undefined ? [data?: Pages[T]] : [data: Pages[T]]
-  ): Promise<unknown>
+  ): Promise<unknown>;
 }
 
-const versionRegex = /(\d+[._]\d+)([._]\d+)*/g // https://regex101.com/r/TgejzT/1
+const versionRegex = /(\d+[._]\d+)([._]\d+)*/g; // https://regex101.com/r/TgejzT/1
 export function anonymizeUserAgent(userAgent?: string): string {
   if (!userAgent) {
-    return "unknown"
+    return "unknown";
   }
-  return userAgent.replace(versionRegex, "$1")
+  return userAgent.replace(versionRegex, "$1");
 }
 
-export type Fetch = (url: string, init?: RequestInit) => Promise<unknown>
+export type Fetch = (url: string, init?: RequestInit) => Promise<unknown>;
 
 const defaultPayload = {
   userId: "00000",
   context: {
     ip: "0.0.0.0",
     app: {
-      name: "Argent X",
+      name: "Guildly",
       version: VERSION,
     },
     library: {
-      name: "argent-x",
+      name: "guildly",
       version: VERSION,
     },
   },
-}
+};
 const headers = {
   "Content-Type": "application/json",
   Authorization: `Basic ${base64.encode(
-    encode.utf8ToArray(`${SEGMENT_WRITE_KEY}:`),
+    encode.utf8ToArray(`${SEGMENT_WRITE_KEY}:`)
   )}`,
-}
+};
 
-const isBrowser = typeof window !== "undefined"
-const defaultUserAgent = isBrowser ? window.navigator.userAgent : "unknown"
+const isBrowser = typeof window !== "undefined";
+const defaultUserAgent = isBrowser ? window.navigator.userAgent : "unknown";
 
 export function getAnalytics(
   fetch: Fetch,
-  userAgent = defaultUserAgent,
+  userAgent = defaultUserAgent
 ): Analytics {
   const prebuiltPayload = {
     ...defaultPayload,
@@ -132,61 +132,61 @@ export function getAnalytics(
       ...defaultPayload.context,
       userAgent: anonymizeUserAgent(userAgent),
     },
-  }
+  };
   return {
     track: async (event, ...[data]) => {
       if (!SEGMENT_WRITE_KEY) {
-        return
+        return;
       }
       const payload = {
         ...prebuiltPayload,
         event,
         properties: data,
         timestamp: new Date().toISOString(),
-      }
+      };
 
       try {
         return await fetch(SEGMENT_TRACK_URL, {
           method: "POST",
           headers,
           body: JSON.stringify(payload),
-        })
+        });
       } catch {
         // ignore
       }
     },
     page: async (name, ...[data]) => {
       if (!SEGMENT_WRITE_KEY) {
-        return
+        return;
       }
       const payload = {
         ...prebuiltPayload,
         name,
         properties: data,
         timestamp: new Date().toISOString(),
-      }
+      };
       try {
         return await fetch(SEGMENT_PAGE_URL, {
           method: "POST",
           headers,
           body: JSON.stringify(payload),
-        })
+        });
       } catch {
         // ignore
       }
     },
-  }
+  };
 }
 
 interface ActiveStoreValues {
-  lastOpened: number
-  lastUnlocked: number
-  lastSession: number
-  lastClosed: number
+  lastOpened: number;
+  lastUnlocked: number;
+  lastSession: number;
+  lastClosed: number;
 }
 
 interface ActiveStore extends ActiveStoreValues {
-  update: (key: keyof ActiveStoreValues) => void
+  update: (key: keyof ActiveStoreValues) => void;
 }
 
 export const activeStore = create<ActiveStore>(
@@ -200,9 +200,9 @@ export const activeStore = create<ActiveStore>(
     }),
     {
       name: "lastSeen",
-    },
-  ),
-)
+    }
+  )
+);
 
 /*
  * There is no usable 'close' event on an extension
@@ -211,7 +211,7 @@ export const activeStore = create<ActiveStore>(
  * as a side-effect of the extension being closed
  */
 
-const EXTENSION_CONNECT_ID = "argent-x-analytics-connect"
+const EXTENSION_CONNECT_ID = "argent-x-analytics-connect";
 
 /** listen for the port connection from the UI, then detect disconnection */
 export const initBackgroundExtensionCloseListener = () => {
@@ -219,13 +219,13 @@ export const initBackgroundExtensionCloseListener = () => {
     if (port.name === EXTENSION_CONNECT_ID) {
       port.onDisconnect.addListener(() => {
         /** Extension was closed */
-        activeStore.getState().update("lastClosed")
-      })
+        activeStore.getState().update("lastClosed");
+      });
     }
-  })
-}
+  });
+};
 
 /** connect to the background port from the UI */
 export const initUiExtensionCloseListener = () => {
-  browser.runtime.connect({ name: EXTENSION_CONNECT_ID })
-}
+  browser.runtime.connect({ name: EXTENSION_CONNECT_ID });
+};

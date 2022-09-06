@@ -46,6 +46,7 @@
     "html-webpack-plugin": "^5.5.0",
     "mitt": "^3.0.0",
     "object-hash": "^3.0.0",
+    "starknet3": "npm:starknet@^3.18.2",
     "styled-normalize": "^8.0.7",
     "webpack": "^5.74.0",
     "webpack-cli": "^4.10.0",

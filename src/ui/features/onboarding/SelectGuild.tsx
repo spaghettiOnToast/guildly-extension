@@ -19,6 +19,16 @@ import { feltToString } from "../../utils/felt";
 import { getImage } from "../getImage";
 import Spinner from "../../components/spinner";
 import { startSession } from "../../services/backgroundSessions";
+import { connectAccount } from "../../services/backgroundAccounts";
+import {
+  useAccounts,
+  useSelectedAccountStore,
+} from "../accounts/accounts.state";
+import {
+  getInstalledWallets,
+  connectWallet,
+  getWallet,
+} from "../../services/getMessages";
 
 const SelectGuildsWrapper = styled.div`
   padding: 40px 40px 24px;
@@ -86,14 +96,14 @@ export const SelectGuild: FC = () => {
       certificate: indexAddress(
         deploymentsConfig["networks"]["goerli"]["guild_certificate"]
       ),
-      account: accountStore ? accountStore[0].account.address : "0x0",
+      account: accountStore
+        ? accountStore[accountStore.length - 1].account.address
+        : "0x0",
     },
     pollInterval: 10000,
   });
 
   const accountGuilds = accountGuildsData ? accountGuildsData.event : [];
-
-  console.log(accountGuildsData);
 
   const aggregatedGuilds = aggregateJoined(accountGuilds);
 
@@ -126,6 +136,12 @@ export const SelectGuild: FC = () => {
     },
   });
 
+  // const guildAccount = {
+  //   account: {
+
+  //   }
+  // }
+
   const guildNames = accountGuildNamesData ? accountGuildNamesData.event : [];
 
   // if (accountGuilds.length > 0) {
@@ -143,27 +159,37 @@ export const SelectGuild: FC = () => {
         <H2>Select Guild</H2>
         <GuildButtonsArea>
           {accountGuildsData ? (
-            guildNames.map((guild, key) => (
-              <GuildButton
-                key={key}
-                onClick={async () => {
-                  storeGuild(guild.arguments[2].value.toLowerCase());
-                  await startSession();
-                  exposeGuild(guild.arguments[2].value.toLowerCase());
-                  navigate(routes.home());
-                }}
-              >
-                <GuildDisplay>
-                  <GuildImage src={getImage()} alt="A warrior" />
-                  <GuildNameDisplay>
-                    <P>{feltToString(toBN(guild.arguments[0].value))}</P>
-                    <P>
-                      {useDisplayName(guild.arguments[2].value.toLowerCase())}
-                    </P>
-                  </GuildNameDisplay>
-                </GuildDisplay>
-              </GuildButton>
-            ))
+            guildNames.length > 0 ? (
+              guildNames.map((guild, key) => (
+                <GuildButton
+                  key={key}
+                  onClick={async () => {
+                    const currentGuild = accountStore[accountStore.length - 1];
+                    currentGuild.account.address =
+                      guild.arguments[2].value.toLowerCase();
+                    console.log(currentGuild);
+                    connectAccount(currentGuild);
+                    storeGuild(currentGuild);
+                    // await startSession();
+                    navigate(routes.home());
+                  }}
+                >
+                  <GuildDisplay>
+                    <GuildImage src={getImage()} alt="A warrior" />
+                    <GuildNameDisplay>
+                      <P>{feltToString(toBN(guild.arguments[0].value))}</P>
+                      <P>
+                        {useDisplayName(guild.arguments[2].value.toLowerCase())}
+                      </P>
+                    </GuildNameDisplay>
+                  </GuildDisplay>
+                </GuildButton>
+              ))
+            ) : (
+              <P>No guilds found.</P>
+            )
+          ) : accountGuildsError ? (
+            <P>{accountGuildsError.message}</P>
           ) : (
             <LoadingIcon>
               <Spinner color={"#a9d1ff"} />

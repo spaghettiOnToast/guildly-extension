@@ -5,12 +5,17 @@ import {
   starknetWindowObject,
   userEventHandlers,
 } from "./starknetWindowObject";
+import { getIsPreauthorized } from "./preAuthorization";
+import { disconnectAccount } from "./account";
+import { getProvider } from "../shared/network/provider";
+import { GuildAccount } from "./GuildAccount";
+import { assertNever } from "./../ui/services/assertNever";
 
 function attach() {
   try {
-    delete window.starknet;
+    delete window.starknet_guildly;
     // set read only property to window
-    Object.defineProperty(window, "starknet", {
+    Object.defineProperty(window, "starknet_guildly", {
       value: starknetWindowObject,
       writable: false,
     });
@@ -19,7 +24,7 @@ function attach() {
   }
   // we need 2 different try catch blocks because we want to execute both even if one of them fails
   try {
-    window.starknet = starknetWindowObject;
+    window.starknet_guildly = starknetWindowObject;
   } catch {
     // ignore
   }
@@ -53,8 +58,11 @@ const extensionId = document
   ?.getAttribute("data-extension-id");
 
 window.addEventListener("message", async (event: any) => {
+  const { starknet_guildly } = window;
+  if (!starknet_guildly) {
+    return;
+  }
   if (event.data.type === "GET_INSTALLED_WALLETS_RES") {
-    console.log("hey");
     const starknetWindows = await getInstalledWallets();
     const wallets = [];
     for (var i = 0; i < starknetWindows.length; i++) {
@@ -71,24 +79,29 @@ window.addEventListener("message", async (event: any) => {
       data: wallets,
       extensionId: extensionId,
     });
-  }
-  if (event.data.type === "CONNECT_WALLET_RES") {
-    getStarknet().enable(event.data.data);
-    const starknetWallet = getStarknet();
+  } else if (event.data.type === "CONNECT_WALLET_RES") {
+    const installedWallets = await getInstalledWallets();
+    const currentWallet = installedWallets.find((obj) => {
+      return obj.id === event.data.data.id;
+    });
+    console.log(currentWallet);
+    await currentWallet?.enable();
     const wallet = {
       account: {
-        address: starknetWallet.account.address,
-        baseUrl: starknetWallet.account.baseUrl,
-        chainId: starknetWallet.account.chainId,
-        feederGatewayUrl: starknetWallet.account.feederGatewayUrl,
-        gatewayUrl: starknetWallet.account.gatewayUrl,
+        address: currentWallet?.account.address,
+        baseUrl: currentWallet?.account.baseUrl,
+        chainId: currentWallet?.account.chainId,
+        feederGatewayUrl: currentWallet?.account.feederGatewayUrl,
+        gatewayUrl: currentWallet?.account.gatewayUrl,
       },
-      icon: starknetWallet.icon,
-      id: starknetWallet.id,
-      isConnected: starknetWallet.isConnected,
-      name: starknetWallet.name,
-      selectedAddress: starknetWallet.selectedAddress,
-      version: starknetWallet.version,
+      chainId: currentWallet?.chainId,
+      icon: currentWallet?.icon,
+      id: currentWallet?.id,
+      isConnected: currentWallet?.isConnected,
+      name: currentWallet?.name,
+      provider: currentWallet?.provider,
+      selectedAddress: currentWallet?.selectedAddress,
+      version: currentWallet?.version,
     };
     // const connectedWallet = <ConnectedWalletObject>getStarknet();
     window.postMessage({
@@ -96,5 +109,51 @@ window.addEventListener("message", async (event: any) => {
       data: wallet,
       extensionId: extensionId,
     });
+  } else if (
+    starknet_guildly.account &&
+    event.data.type === "CONNECT_ACCOUNT_RES"
+  ) {
+    // const { address, network } = event.data.data;
+    const guildAccount = event.data.data;
+    const isPreauthorized = await getIsPreauthorized();
+    if (!isPreauthorized) {
+      // disconnect so the user can see they are no longer connected
+      // TODO: better UX would be to also re-connect when user selects pre-authorized account
+      await disconnectAccount();
+    } else {
+      if (
+        guildAccount.account.address !== starknet_guildly.selectedAddress ||
+        guildAccount.account.chainId !== starknet_guildly.chainId
+      ) {
+        starknet_guildly.selectedAddress = guildAccount.account.address;
+        starknet_guildly.chainId = guildAccount.account.chainId;
+        starknet_guildly.provider = guildAccount.account.provider;
+        starknet_guildly.account = guildAccount.account;
+        console.log("did this");
+        for (const userEvent of userEventHandlers) {
+          if (userEvent.type === "accountsChanged") {
+            userEvent.handler([guildAccount.account.address]);
+          } else if (userEvent.type === "networkChanged") {
+            userEvent.handler(guildAccount.account.chainId);
+          } else {
+            assertNever(userEvent);
+          }
+        }
+        console.log("and that");
+      }
+    }
+  } else if (event.data.type === "DISCONNECT_ACCOUNT") {
+    starknet_guildly.selectedAddress = undefined;
+    starknet_guildly.account = undefined;
+    starknet_guildly.isConnected = false;
+    for (const userEvent of userEventHandlers) {
+      if (userEvent.type === "accountsChanged") {
+        userEvent.handler([]);
+      } else if (userEvent.type === "networkChanged") {
+        userEvent.handler(undefined);
+      } else {
+        assertNever(userEvent);
+      }
+    }
   }
 });

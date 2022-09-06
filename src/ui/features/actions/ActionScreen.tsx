@@ -7,13 +7,17 @@ import { useActions } from "./action.state";
 import { approveAction, rejectAction } from "../../services/backgroundActions";
 import { EXTENSION_IS_POPUP } from "../browser/constants";
 import { useAppState } from "../../app.state";
-import { useSelectedAccountStore } from "../accounts/accounts.state";
+import {
+  useSelectedAccount,
+  useSelectedAccountStore,
+} from "../accounts/accounts.state";
 import { Account } from "../accounts/Account";
 import { connectAccount } from "../../services/backgroundAccounts";
 import { ConnectDappScreen } from "./ConnectDappScreen";
 import { removePreAuthorization } from "../../../shared/preAuthorizations";
 
 export const ActionScreen: FC = () => {
+  const account = useSelectedAccount();
   const actions = useActions();
   const [action] = actions;
   const isLastAction = actions.length === 1;
@@ -22,6 +26,16 @@ export const ActionScreen: FC = () => {
       window.close();
     }
   }, [isLastAction]);
+
+  const onSubmit = useCallback(async () => {
+    await approveAction(action);
+    closePopupIfLastAction();
+  }, [action, closePopupIfLastAction]);
+
+  const onReject = useCallback(async () => {
+    await rejectAction(action);
+    closePopupIfLastAction();
+  }, [action, closePopupIfLastAction]);
   switch (action?.type) {
     case "CONNECT_DAPP":
       return (
@@ -52,6 +66,13 @@ export const ActionScreen: FC = () => {
       );
 
     case "TRANSACTION":
-      return <ApproveTransaction transactions={action.payload.transactions} />;
+      return (
+        <ApproveTransaction
+          transactions={action.payload.transactions}
+          onSubmit={onSubmit}
+          onReject={onReject}
+          selectedAccount={account}
+        />
+      );
   }
 };

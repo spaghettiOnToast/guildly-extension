@@ -35,6 +35,12 @@ export const handlePreAuthorizationMessage: HandleMessage<
   switch (msg.type) {
     case "CONNECT_DAPP": {
       const selectedAccount = await guild.getSelectedAccount();
+      if (sender.tab?.id) {
+        addTab({
+          id: sender.tab?.id,
+          host: msg.data.host,
+        });
+      }
       if (!selectedAccount) {
         openUi();
         return;
@@ -44,12 +50,12 @@ export const handlePreAuthorizationMessage: HandleMessage<
         msg.data.host
       );
 
-      if (sender.tab?.id) {
-        addTab({
-          id: sender.tab?.id,
-          host: msg.data.host,
-        });
-      }
+      // if (sender.tab?.id) {
+      //   addTab({
+      //     id: sender.tab?.id,
+      //     host: msg.data.host,
+      //   });
+      // }
 
       if (!isAuthorized) {
         await actionQueue.push({
@@ -58,9 +64,10 @@ export const handlePreAuthorizationMessage: HandleMessage<
         });
       }
 
+      console.log(isAuthorized);
       if (isAuthorized && selectedAccount?.address) {
         return sendToTabAndUi({
-          type: "CONNECT_DAPP_RES",
+          type: "CONNECT_GUILD_RES",
           data: selectedAccount,
         });
       }

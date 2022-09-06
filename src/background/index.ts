@@ -18,11 +18,14 @@ import {
   sendMessageToActiveTabsAndUi,
 } from "./activeTabs";
 import { handlePreAuthorizationMessage } from "./preAuthorizationMessaging";
+import { handleSessionMessage } from "./sessionMessaging";
+import { handleAccountMessage } from "./accountMessaging";
 
 const handlers = [
   handleMessage,
   handleActionMessage,
   handlePreAuthorizationMessage,
+  handleAccountMessage,
 ] as Array<any>;
 
 messageStream.subscribe(async ([msg, sender]) => {
