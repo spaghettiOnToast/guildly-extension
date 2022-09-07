@@ -29,7 +29,11 @@ type WalletsMessage =
   | { type: "GET_SELECTED_ACCOUNT_RES"; data: any }
   | { type: "LOADING_PROGRESS"; data: any }
   | { type: "CONNECT_GUILD_RES"; data: any }
-  | { type: "CONNECT_GUILD"; data: any };
+  | { type: "CONNECT_GUILD"; data: any }
+  | { type: "TRANSACTION_SUBMITTED"; data: any }
+  | { type: "TRANSACTION_FAILED"; data: any }
+  | { type: "TRANSACTION_FORWARDED"; data: any }
+  | { type: "TRANSACTION_FORWARDED_RES"; data: any };
 
 export type MessageType =
   | WalletsMessage

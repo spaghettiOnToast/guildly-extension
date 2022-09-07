@@ -17,6 +17,7 @@ import { ConnectDappScreen } from "./ConnectDappScreen";
 import { removePreAuthorization } from "../../../shared/preAuthorizations";
 
 export const ActionScreen: FC = () => {
+  console.log("we here?");
   const account = useSelectedAccount();
   const actions = useActions();
   const [action] = actions;

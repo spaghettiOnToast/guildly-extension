@@ -29,11 +29,14 @@ export class GuildAccount extends Account {
       type: "EXECUTE_TRANSACTION",
       data: { transactions, abis, transactionsDetail },
     });
+    console.log("hello");
     const { actionHash } = await waitForMessage(
       "EXECUTE_TRANSACTION_RES",
       1000
     );
     sendMessage({ type: "OPEN_UI" });
+
+    console.log("here");
 
     const result = await Promise.race([
       waitForMessage(
@@ -52,6 +55,8 @@ export class GuildAccount extends Account {
           return "timeout" as const;
         }),
     ]);
+
+    console.log(result);
 
     if (result === "error") {
       throw Error("User abort");

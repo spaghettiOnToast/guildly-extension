@@ -25,7 +25,12 @@ export const handleActionMessage: any = async ({
       if (!action) {
         throw new Error("Action not found");
       }
-      const resultMessage = await handleActionApproval(action, background);
+      const resultMessage = await handleActionApproval(
+        action,
+        background,
+        sendToTabAndUi
+      );
+      console.log(resultMessage);
       if (resultMessage) {
         sendToTabAndUi(resultMessage);
       }

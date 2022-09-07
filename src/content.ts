@@ -11,6 +11,10 @@ script.setAttribute("data-extension-id", guildlyExtensionId);
 
 container.insertBefore(script, container.children[0]);
 
+const argentExtensionId = document
+  .getElementById("argent-x-extension")
+  ?.getAttribute("data-extension-id");
+
 chrome.runtime.onMessage.addListener((obj, sender, response) => {
   window.postMessage(
     { ...obj, forwarded: true, extensionId: guildlyExtensionId },
@@ -19,7 +23,6 @@ chrome.runtime.onMessage.addListener((obj, sender, response) => {
 });
 
 window.addEventListener("message", function (event: any) {
-  console.log(event.data);
   if (
     !event.data?.forwarded &&
     event.data?.extensionId === guildlyExtensionId

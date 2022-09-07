@@ -36,15 +36,25 @@ export const handleMessage: any = async ({
       return sendToTabAndUi({ type: "CONNECTED_GUILD_RES", data: msg.data });
     }
     case "EXECUTE_TRANSACTION": {
-      await actionQueue.push({
+      const { meta } = await actionQueue.push({
         type: "TRANSACTION",
         payload: msg.data,
       });
-      await openUi();
+      return sendToTabAndUi({
+        type: "EXECUTE_TRANSACTION_RES",
+        data: { actionHash: meta.hash },
+      });
     }
     case "OPEN_UI": {
       await openUi();
     }
+    // case "TRANSACTION_FORWARDED": {
+    //   console.log("hey again");
+    //   return sendToTabAndUi({
+    //     type: "TRANSACTION_FORWARDED_RES",
+    //     data: msg.data,
+    //   });
+    // }
   }
 
   throw new UnhandledMessage();

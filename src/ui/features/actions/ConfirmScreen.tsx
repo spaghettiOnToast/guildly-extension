@@ -70,11 +70,6 @@ export const StickyGroup = styled.div`
   > * + * {
     margin-top: 24px;
   }
-
-  ${({ theme }) => theme.mediaMinWidth.sm`
-    left: ${theme.margin.extensionInTab};
-    right: ${theme.margin.extensionInTab};
-  `}
 `;
 
 const Placeholder = styled.div`
@@ -101,9 +96,8 @@ export const ConfirmScreen: FC<ConfirmScreenProps> = ({
   ...props
 }) => {
   const navigate = useNavigate();
-  const { accountNames } = useAccountMetadata();
   const [placeholderHeight, setPlaceholderHeight] = useState(100);
-  onReject ??= () => navigate(-1);
+  // onReject ??= () => navigate(-1);
 
   return (
     <ConfirmScreenWrapper
@@ -138,7 +132,7 @@ export const ConfirmScreen: FC<ConfirmScreenProps> = ({
       >
         {({ measureRef }) => (
           <StickyGroup ref={measureRef}>
-            {footer}
+            {/* {footer} */}
             <ButtonGroupVertical switchButtonOrder={switchButtonOrder}>
               {!singleButton && (
                 <Button onClick={onReject} type="button">

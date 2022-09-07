@@ -54,7 +54,7 @@ export const AppRoutes: FC = () => {
   useEntryRoute();
   const actions = useActions();
 
-  console.log(actions);
+  console.log(actions[0]);
 
   return (
     <Routes>

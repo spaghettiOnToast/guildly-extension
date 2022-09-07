@@ -5,6 +5,8 @@ import { Call } from "starknet";
 import { P, H1, H2 } from "../../components/Typography";
 import { Button } from "../../components/Button";
 import { Account } from "../accounts/Account";
+import { ConfirmPageProps, ConfirmScreen } from "./ConfirmScreen";
+import { formatTransaction } from "./transaction/formatTransaction";
 
 const ApproveTransactionWrapper = styled.div`
   padding: 20px 40px 24px;
@@ -14,35 +16,42 @@ const ApproveTransactionWrapper = styled.div`
   justify-content: center;
 `;
 
-interface ApproveTransactionProps {
+interface ApproveTransactionProps extends Omit<ConfirmPageProps, "onSubmit"> {
+  actionHash: string;
   transactions: Call | Call[];
-  onSubmit?: (e: FormEvent<HTMLFormElement>) => void;
-  onReject?: () => void;
-  selectedAccount?: Account;
+  onSubmit: (transactions: Call | Call[]) => void;
 }
 
 export const ApproveTransaction: FC<ApproveTransactionProps> = ({
   transactions,
   onSubmit,
-  onReject,
   selectedAccount,
+  actionHash,
+  ...props
 }) => {
   const transactionsArray: Call[] = isArray(transactions)
     ? transactions
     : [transactions];
   console.log(selectedAccount);
+  const formattedTransaction = formatTransaction(transactionsArray);
+  console.log(formattedTransaction);
   return (
     <>
-      <ApproveTransactionWrapper>
-        <H2>Confirm Transaction</H2>
+      <ConfirmScreen
+        title="Confirm Transaction"
+        confirmButtonText="Approve"
+        selectedAccount={selectedAccount}
+        onSubmit={() => {
+          onSubmit(transactions);
+        }}
+        showHeader={false}
+        {...props}
+      >
         {transactionsArray.map((transaction, index) => (
           <P key={index}>{transaction.entrypoint}</P>
         ))}
         <P>{selectedAccount?.address}</P>
-        <Button onClick={onReject} type="button">
-          Reject
-        </Button>
-      </ApproveTransactionWrapper>
+      </ConfirmScreen>
     </>
   );
 };

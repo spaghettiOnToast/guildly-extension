@@ -1,15 +1,18 @@
 import { ActionItem, ExtQueueItem } from "../shared/actionQueue/types";
-import { MessageType } from "../shared/messages";
+import { MessageType, waitForMessage } from "../shared/messages";
 import { preAuthorize } from "../shared/preAuthorizations";
 import { assertNever } from "../ui/services/assertNever";
 import { analytics } from "./analytics";
 import { BackgroundService } from "./background";
 import { openUi } from "./openUi";
+import { formatTransaction } from "../ui/features/actions/transaction/formatTransaction";
+
 // import { executeTransaction } from "./transactions/transactionExecution";
 
 export const handleActionApproval = async (
   action: ExtQueueItem<ActionItem>,
-  background: BackgroundService
+  background: BackgroundService,
+  sendToTabAndUi: any
 ): Promise<MessageType | undefined> => {
   const { guild } = background;
   const actionHash = action.meta.hash;
@@ -37,6 +40,16 @@ export const handleActionApproval = async (
     case "TRANSACTION": {
       try {
         // const response = await executeTransaction(action, background);
+        // const newTransactions = await formatTransaction(
+        //   action.payload.transactions
+        // );
+        // action.payload.transactions = newTransactions;
+        sendToTabAndUi({
+          type: "FORWARD_TRANSACTION",
+          data: { wallet: "argentx", payload: action.payload },
+        });
+
+        const response = await waitForMessage("TRANSACTION_FORWARDED");
 
         return {
           type: "TRANSACTION_SUBMITTED",

@@ -10,6 +10,7 @@ import { disconnectAccount } from "./account";
 import { getProvider } from "../shared/network/provider";
 import { GuildAccount } from "./GuildAccount";
 import { assertNever } from "./../ui/services/assertNever";
+import { useStarknetTransactionManager } from "@starknet-react/core";
 
 function attach() {
   try {
@@ -153,6 +154,26 @@ window.addEventListener("message", async (event: any) => {
         userEvent.handler(undefined);
       } else {
         assertNever(userEvent);
+      }
+    }
+  } else if (event.data.type === "FORWARD_TRANSACTION") {
+    if (event.data.data?.wallet && event.data.data?.wallet == "argentx") {
+      const installedWallets = await getInstalledWallets();
+      const currentWallet = installedWallets.find((obj) => {
+        return obj.id === "argentX";
+      });
+      try {
+        const result = await currentWallet?.account.execute(
+          event.data.data.payload.transactions
+        );
+        console.log(result);
+        window.postMessage({
+          type: "TRANSACTION_FORWARDED",
+          data: result,
+          extensionId: extensionId,
+        });
+      } catch (e) {
+        console.log(e);
       }
     }
   }
