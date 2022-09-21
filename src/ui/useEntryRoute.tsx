@@ -33,13 +33,9 @@ export const useEntryRoute = () => {
 };
 
 const determineEntry = async () => {
-  const { initialized } = await isInitialized();
-  if (!initialized) {
-    return routes.welcome();
+  const hasSession = await hasActiveSession();
+  if (hasSession) {
+    return routes.home();
   }
-
-  // const hasSession = await hasActiveSession();
-  // if (hasSession) {
-  return routes.home();
-  // }
+  return routes.welcome();
 };

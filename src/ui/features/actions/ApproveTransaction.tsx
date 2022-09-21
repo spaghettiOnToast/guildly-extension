@@ -7,6 +7,16 @@ import { Button } from "../../components/Button";
 import { Account } from "../accounts/Account";
 import { ConfirmPageProps, ConfirmScreen } from "./ConfirmScreen";
 import { formatTransaction } from "./transaction/formatTransaction";
+import { useAppState } from "../../app.state";
+import { TransactionsList } from "./transaction/TransactionsList";
+import { AccountAddressField } from "./transaction/fields/AccountAddressField";
+import {
+  Field,
+  FieldGroup,
+  FieldKey,
+  FieldValue,
+} from "../../components/Fields";
+import { guildStore } from "../../../shared/storage/guilds";
 
 const ApproveTransactionWrapper = styled.div`
   padding: 20px 40px 24px;
@@ -29,12 +39,16 @@ export const ApproveTransaction: FC<ApproveTransactionProps> = ({
   actionHash,
   ...props
 }) => {
-  const transactionsArray: Call[] = isArray(transactions)
-    ? transactions
-    : [transactions];
   console.log(selectedAccount);
-  const formattedTransaction = formatTransaction(transactionsArray);
-  console.log(formattedTransaction);
+  // const formattedTransaction = formatTransaction(transactions);
+  // console.log(formattedTransaction);
+  const { switcherNetworkId } = useAppState();
+  const thisGuild = guildStore[guildStore.length - 1];
+  // if (!selectedAccount) {
+  //   // return <Navigate to={routes.accounts()} />
+  //   return <P>No account connected</P>;
+  // }
+
   return (
     <>
       <ConfirmScreen
@@ -47,10 +61,24 @@ export const ApproveTransaction: FC<ApproveTransactionProps> = ({
         showHeader={false}
         {...props}
       >
-        {transactionsArray.map((transaction, index) => (
-          <P key={index}>{transaction.entrypoint}</P>
-        ))}
-        <P>{selectedAccount?.address}</P>
+        <TransactionsList
+          networkId={switcherNetworkId}
+          transactions={transactions}
+        />
+        <FieldGroup>
+          <AccountAddressField
+            title="Guild"
+            // accountAddress={selectedAccount.address}
+            // networkId={selectedAccount.network.id}
+            accountAddress={thisGuild.account.address}
+            networkId={thisGuild.chainId}
+          />
+          <Field>
+            <FieldKey>Network</FieldKey>
+            <FieldValue>{thisGuild.chainId}</FieldValue>
+          </Field>
+        </FieldGroup>
+        {/* <P>{selectedAccount?.address}</P> */}
       </ConfirmScreen>
     </>
   );

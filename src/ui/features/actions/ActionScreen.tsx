@@ -15,10 +15,11 @@ import { Account } from "../accounts/Account";
 import { connectAccount } from "../../services/backgroundAccounts";
 import { ConnectDappScreen } from "./ConnectDappScreen";
 import { removePreAuthorization } from "../../../shared/preAuthorizations";
+import { formatTransaction } from "./transaction/formatTransaction";
 
 export const ActionScreen: FC = () => {
-  console.log("we here?");
   const account = useSelectedAccount();
+  console.log(account);
   const actions = useActions();
   const [action] = actions;
   const isLastAction = actions.length === 1;

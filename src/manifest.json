@@ -28,6 +28,6 @@
       "all_frames": true
     }
   ],
-  "permissions": ["storage", "tabs", "activeTab"],
+  "permissions": ["storage", "tabs", "activeTab", "alarms"],
   "web_accessible_resources": ["inpage.js"]
 }

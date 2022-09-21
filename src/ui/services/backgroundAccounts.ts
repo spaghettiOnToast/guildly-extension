@@ -95,17 +95,3 @@ export const getPrivateKey = async () => {
 
   return await decryptFromBackground(encryptedPrivateKey, secret);
 };
-
-export const getSeedPhrase = async (): Promise<string> => {
-  const { secret, encryptedSecret } = await generateEncryptedSecret();
-  sendMessage({
-    type: "GET_ENCRYPTED_SEED_PHRASE",
-    data: { encryptedSecret },
-  });
-
-  const { encryptedSeedPhrase } = await waitForMessage(
-    "GET_ENCRYPTED_SEED_PHRASE_RES"
-  );
-
-  return await decryptFromBackground(encryptedSeedPhrase, secret);
-};

@@ -4,7 +4,7 @@ import { getQueue } from "./actionQueue";
 import { globalActionQueueStore } from "../shared/actionQueue/store";
 import { ActionItem } from "../shared/actionQueue/types";
 import { handleActionMessage } from "./actionMessaging";
-import { Guild, sessionStore, walletStore } from "./guild";
+import { Guild, sessionStore, guildStore } from "./guild";
 import { getNetwork } from "../shared/network";
 import { accountStore, getAccounts } from "../shared/account/store";
 import {
@@ -26,12 +26,13 @@ const handlers = [
   handleActionMessage,
   handlePreAuthorizationMessage,
   handleAccountMessage,
+  handleSessionMessage,
 ] as Array<any>;
 
 messageStream.subscribe(async ([msg, sender]) => {
   const actionQueue = await getQueue<ActionItem>(globalActionQueueStore);
 
-  const guild = new Guild(walletStore, accountStore, sessionStore, getNetwork);
+  const guild = new Guild(guildStore, sessionStore);
 
   const background: BackgroundService = {
     guild,

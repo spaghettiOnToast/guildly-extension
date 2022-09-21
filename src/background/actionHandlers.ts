@@ -5,7 +5,7 @@ import { assertNever } from "../ui/services/assertNever";
 import { analytics } from "./analytics";
 import { BackgroundService } from "./background";
 import { openUi } from "./openUi";
-import { formatTransaction } from "../ui/features/actions/transaction/formatTransaction";
+import { formatTransaction } from "../background/transaction/formatTransaction";
 
 // import { executeTransaction } from "./transactions/transactionExecution";
 
@@ -38,12 +38,12 @@ export const handleActionApproval = async (
     }
 
     case "TRANSACTION": {
+      const selectedAccount = await guild.getSelectedAccount();
+      action.payload.transactions = formatTransaction(
+        selectedAccount?.address,
+        action.payload.transactions
+      );
       try {
-        // const response = await executeTransaction(action, background);
-        // const newTransactions = await formatTransaction(
-        //   action.payload.transactions
-        // );
-        // action.payload.transactions = newTransactions;
         sendToTabAndUi({
           type: "FORWARD_TRANSACTION",
           data: { wallet: "argentx", payload: action.payload },

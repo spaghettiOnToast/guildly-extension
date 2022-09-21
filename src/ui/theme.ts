@@ -1,6 +1,7 @@
 import { createTheme } from "@mui/material/styles";
 import { createGlobalStyle } from "styled-components";
 import { normalize } from "styled-normalize";
+import { colord } from "colord";
 
 /**
  * Adds additional variables to the theme
@@ -22,6 +23,93 @@ declare module "@mui/material/styles" {
   }
 }
 
+const white = "#FFFFFF";
+const black = "#000000";
+
+export const colors = {
+  white,
+  black,
+
+  bg1: "#161616",
+  bg2: "#333332",
+  bg3: "#474747",
+  bg4: "#5f5e5c",
+  bg5: "#fafafa",
+  bg6: "#393939",
+
+  text1: white,
+  text2: "#8f8e8c",
+  text3: "#5c5b59",
+  text4: "#c2c0be",
+
+  red1: "#c12026",
+  red2: "#ff675c",
+  red3: "#ff875b",
+  red4: "#f36a3d",
+
+  blue0: "#0078a4",
+  blue1: "#29c5ff",
+  blue2: "#94e2ff",
+
+  yellow1: "#ffbf3d",
+
+  green1: "#02bba8",
+  green2: "#02a697",
+};
+
+export const components = {
+  button: {
+    default: {
+      fg: {
+        base: colors.text1,
+        disabled: colord(colors.text1).alpha(0.5).toRgbString(),
+      },
+      bg: {
+        base: "rgba(255, 255, 255, 0.15)",
+        hover: "rgba(255, 255, 255, 0.25)",
+        disabled: "rgba(255, 255, 255, 0.15)",
+      },
+    },
+    "warn-high": {
+      bg: {
+        base: colors.red4,
+        hover: colord(colors.red4).saturate(1).lighten(0.075).toRgbString(),
+        disabled: colord(colors.red4).alpha(0.5).toRgbString(),
+      },
+    },
+    warn: {
+      bg: {
+        base: colors.yellow1,
+        hover: colord(colors.yellow1).saturate(1).lighten(0.075).toRgbString(),
+        disabled: colord(colors.yellow1).alpha(0.5).toRgbString(),
+      },
+    },
+    danger: {
+      bg: {
+        base: colors.red1,
+        hover: colord(colors.red1).lighten(0.075).toRgbString(),
+        disabled: colord(colors.red1).alpha(0.5).toRgbString(),
+      },
+    },
+    info: {
+      bg: {
+        base: colors.blue0,
+        hover: colord(colors.blue0).lighten(0.075).toRgbString(),
+        disabled: colord(colors.blue0).alpha(0.5).toRgbString(),
+      },
+    },
+    transparent: {
+      bg: {
+        base: "transparent",
+        hover: "rgba(255, 255, 255, 0.075)",
+        disabled: "transaprent",
+      },
+    },
+    radius: "500px",
+    transition: "color 200ms ease-in-out, background-color 200ms ease-in-out",
+  },
+};
+
 export const theme = createTheme({
   palette: {
     mode: "dark",
@@ -29,6 +117,7 @@ export const theme = createTheme({
   margin: {
     extensionInTab: "10%",
   },
+  ...components,
 });
 
 export interface GlobalStyleProps {

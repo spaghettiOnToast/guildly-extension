@@ -29,6 +29,7 @@ import {
   connectWallet,
   getWallet,
 } from "../../services/getMessages";
+import cloneDeep from "lodash.clonedeep";
 
 const SelectGuildsWrapper = styled.div`
   padding: 40px 40px 24px;
@@ -164,13 +165,16 @@ export const SelectGuild: FC = () => {
                 <GuildButton
                   key={key}
                   onClick={async () => {
-                    const currentGuild = accountStore[accountStore.length - 1];
+                    const currentGuild = cloneDeep(
+                      accountStore[accountStore.length - 1]
+                    );
                     currentGuild.account.address =
                       guild.arguments[2].value.toLowerCase();
-                    console.log(currentGuild);
+                    await startSession();
+                    console.log("made it");
                     connectAccount(currentGuild);
+                    console.log("and here");
                     storeGuild(currentGuild);
-                    // await startSession();
                     navigate(routes.home());
                   }}
                 >

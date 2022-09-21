@@ -8,17 +8,14 @@ import { HandleMessage } from "./background";
 export const handleSessionMessage: HandleMessage<SessionMessage> = async ({
   msg,
   background: { guild },
-  messagingKeys: { privateKey },
+  // messagingKeys: { privateKey },
   sendToTabAndUi,
 }) => {
   switch (msg.type) {
     case "START_SESSION": {
-      const result = await guild.startSession((percent) => {
-        sendToTabAndUi({ type: "LOADING_PROGRESS", data: percent });
-      });
+      const result = await guild.startSession();
       if (result) {
         const selectedAccount = await guild.getSelectedAccount();
-        console.log(selectedAccount);
         return sendToTabAndUi({
           type: "START_SESSION_RES",
           data: selectedAccount,
@@ -27,35 +24,25 @@ export const handleSessionMessage: HandleMessage<SessionMessage> = async ({
       return sendToTabAndUi({ type: "START_SESSION_REJ" });
     }
 
-    case "CHECK_PASSWORD": {
-      const { body } = msg.data;
-      const { plaintext } = await compactDecrypt(body, privateKey);
-      const password = encode.arrayBufferToString(plaintext);
-      if (await wallet.checkPassword(password)) {
-        return sendToTabAndUi({ type: "CHECK_PASSWORD_RES" });
-      }
-      return sendToTabAndUi({ type: "CHECK_PASSWORD_REJ" });
-    }
-
     case "HAS_SESSION": {
       return sendToTabAndUi({
         type: "HAS_SESSION_RES",
-        data: await wallet.isSessionOpen(),
+        data: await guild.isSessionOpen(),
       });
     }
 
     case "STOP_SESSION": {
-      await wallet.lock();
+      await guild.lock();
       return sendToTabAndUi({ type: "DISCONNECT_ACCOUNT" });
     }
 
-    case "IS_INITIALIZED": {
-      const initialized = await wallet.isInitialized();
-      return sendToTabAndUi({
-        type: "IS_INITIALIZED_RES",
-        data: { initialized },
-      });
-    }
+    // case "IS_INITIALIZED": {
+    //   const initialized = await guild.isInitialized();
+    //   return sendToTabAndUi({
+    //     type: "IS_INITIALIZED_RES",
+    //     data: { initialized },
+    //   });
+    // }
   }
 
   throw new UnhandledMessage();

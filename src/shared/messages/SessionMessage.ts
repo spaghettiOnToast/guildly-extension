@@ -1,4 +1,4 @@
-import { GuildAccount } from "../guild.model";
+import { BaseGuildAccount, GuildAccount } from "../guild.model";
 
 export type SessionMessage =
   | { type: "STOP_SESSION" }
@@ -11,4 +11,4 @@ export type SessionMessage =
     }
   | { type: "START_SESSION" }
   | { type: "START_SESSION_REJ" }
-  | { type: "START_SESSION_RES"; data?: GuildAccount };
+  | { type: "START_SESSION_RES"; data?: BaseGuildAccount };

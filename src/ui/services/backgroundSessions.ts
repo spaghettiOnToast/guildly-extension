@@ -29,16 +29,3 @@ export const startSession = async (): Promise<void> => {
 export const stopSession = () => {
   sendMessage({ type: "STOP_SESSION" });
 };
-
-// export const checkPassword = async (password: string): Promise<boolean> => {
-//   const body = await encryptForBackground(password)
-
-//   sendMessage({ type: "CHECK_PASSWORD", data: { body } })
-
-//   return await Promise.race([
-//     waitForMessage("CHECK_PASSWORD_RES").then(() => true),
-//     waitForMessage("CHECK_PASSWORD_REJ")
-//       .then(() => false)
-//       .catch(() => false),
-//   ])
-// }

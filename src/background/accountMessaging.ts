@@ -1,6 +1,7 @@
 import { getAccounts, removeAccount } from "../shared/account/store";
 import { sendMessageToUi } from "./activeTabs";
 import { HandleMessage, UnhandledMessage } from "./background";
+import { Guild } from "./guild";
 
 export const handleAccountMessage: HandleMessage<any> = async ({
   msg,
@@ -16,8 +17,7 @@ export const handleAccountMessage: HandleMessage<any> = async ({
     }
 
     case "CONNECT_GUILD": {
-      await guild.selectAccount(msg.data);
-      console.log("account selected");
+      await guild.addAccount(msg.data.account.address);
       return sendToTabAndUi({
         type: "CONNECT_GUILD_RES",
         data: msg.data,
