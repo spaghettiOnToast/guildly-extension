@@ -8,7 +8,7 @@ import { approveAction, rejectAction } from "../../services/backgroundActions";
 import { EXTENSION_IS_POPUP } from "../browser/constants";
 import { useAppState } from "../../app.state";
 import {
-  useSelectedAccount,
+  useAccount,
   useSelectedAccountStore,
 } from "../accounts/accounts.state";
 import { Account } from "../accounts/Account";
@@ -18,7 +18,7 @@ import { removePreAuthorization } from "../../../shared/preAuthorizations";
 import { formatTransaction } from "./transaction/formatTransaction";
 
 export const ActionScreen: FC = () => {
-  const account = useSelectedAccount();
+  const account = useAccount();
   console.log(account);
   const actions = useActions();
   const [action] = actions;

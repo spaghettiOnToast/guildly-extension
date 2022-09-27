@@ -15,32 +15,14 @@ export class Account {
   address: string;
   network: Network;
   networkId: string;
-  signer: WalletAccountSigner;
-  deployTransaction?: string;
   contract: Contract;
   proxyContract: Contract;
   provider: ProviderInterface;
-  hidden?: boolean;
 
-  constructor({
-    address,
-    network,
-    signer,
-    deployTransaction,
-    hidden,
-  }: {
-    address: string;
-    network: Network;
-    signer: WalletAccountSigner;
-    deployTransaction?: string;
-    hidden?: boolean;
-  }) {
+  constructor({ address, network }: { address: string; network: Network }) {
     this.address = address;
     this.network = network;
     this.networkId = network.id;
-    this.signer = signer;
-    this.hidden = hidden;
-    this.deployTransaction = deployTransaction;
     this.provider = getProvider(network);
     this.contract = new Contract(
       GuildlyCompiledContractAbi as Abi,

@@ -9,6 +9,7 @@ import {
 import { accountStore } from "../../../shared/account/store";
 import { defaultNetwork } from "../../../shared/network";
 import { useArrayStorage } from "../../../shared/storage/hooks";
+import { useObjectStorage } from "../../../shared/storage/hooks";
 import { BaseGuildAccount, GuildAccount } from "../../../shared/guild.model";
 import { accountsEqual } from "../../../shared/guild.service";
 import { useCurrentNetwork } from "../networks/useNetworks";
@@ -28,35 +29,13 @@ export const mapWalletAccountsToAccounts = (
   );
 };
 
-export const useAccounts = ({
-  showHidden = false,
-  allNetworks = false,
-} = {}) => {
-  const network = useCurrentNetwork();
-  const accounts = useArrayStorage(accountStore);
-
-  const filteredAccounts = useMemo(
-    () =>
-      accounts
-        .filter(
-          allNetworks
-            ? () => true
-            : getNetworkSelector(network.id ?? defaultNetwork.id)
-        )
-        .filter(showHidden ? withHiddenSelector : withoutHiddenSelector),
-    [network.id, showHidden, allNetworks, accounts]
-  );
-
-  return useMemo(() => {
-    return mapWalletAccountsToAccounts(filteredAccounts);
-  }, [filteredAccounts]);
-};
-
-export const useAccount = (account?: BaseGuildAccount): Account | undefined => {
-  const accounts = useAccounts({ allNetworks: true, showHidden: true });
-  return useMemo(() => {
-    return accounts.find((a) => account && accountsEqual(a, account));
-  }, [accounts, account]);
+export const useAccount = ({} = {}) => {
+  const account = useObjectStorage(accountStore);
+  // const newAccount = new Account({
+  //   account: account?.address,
+  //   network: account.networkId,
+  // });
+  return account;
 };
 
 export const isHiddenAccount = (account: Account) => !!account.hidden;
