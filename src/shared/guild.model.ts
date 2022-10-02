@@ -11,12 +11,13 @@ export interface WithSigner {
 
 export interface BaseGuildAccount {
   address: string;
+  account: string;
   networkId: string;
+  walletProvider: string;
 }
 
-export interface GuildAccount extends BaseGuildAccount, WithSigner {
+export interface GuildAccount extends BaseGuildAccount {
   network: Network;
-  hidden?: boolean;
 }
 
 export type StoredGuildAccount = Omit<GuildAccount, "network">;

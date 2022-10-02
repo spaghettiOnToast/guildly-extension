@@ -12,6 +12,7 @@ type WalletsMessage =
   | { type: "GET_INSTALLED_WALLETS_RES" }
   | { type: "GET_INSTALLED_WALLETS" }
   | { type: "CONNECT_WALLET"; data: any }
+  | { type: "CONNECT_WALLET_RES"; data: any }
   | { type: "CONNECTED_WALLET_RES"; data: any }
   | { type: "EXECUTED_TRANSACTION"; data: any }
   | { type: "OPEN_UI" }
@@ -33,7 +34,11 @@ type WalletsMessage =
   | { type: "TRANSACTION_SUBMITTED"; data: any }
   | { type: "TRANSACTION_FAILED"; data: any }
   | { type: "TRANSACTION_FORWARDED"; data: any }
-  | { type: "TRANSACTION_FORWARDED_RES"; data: any };
+  | { type: "TRANSACTION_FORWARDED_RES"; data: any }
+  | { type: "GET_SELECTED_ACCOUNT" }
+  | { type: "SELECT_ACCOUNT"; data: any }
+  | { type: "SELECT_ACCOUNT_RES"; data: any }
+  | { type: "SELECT_ACCOUNT_REJ"; data: any };
 
 export type MessageType =
   | WalletsMessage

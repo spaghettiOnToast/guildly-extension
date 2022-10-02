@@ -34,7 +34,7 @@ export const handleActionApproval = async (
 
       await preAuthorize(selectedAccount, host);
 
-      return { type: "CONNECT_GUILD_RES", data: selectedAccount };
+      return { type: "CONNECT_DAPP_RES", data: selectedAccount };
     }
 
     case "TRANSACTION": {
@@ -43,10 +43,14 @@ export const handleActionApproval = async (
         selectedAccount?.address,
         action.payload.transactions
       );
+      console.log(selectedAccount);
       try {
         sendToTabAndUi({
           type: "FORWARD_TRANSACTION",
-          data: { wallet: "argentx", payload: action.payload },
+          data: {
+            wallet: selectedAccount?.walletProvider,
+            payload: action.payload,
+          },
         });
 
         const response = await waitForMessage("TRANSACTION_FORWARDED");

@@ -23,8 +23,8 @@ export interface WalletSession {
   secret: string;
 }
 
-export const guildStore = new ObjectStorage<BaseGuildAccount | null>(null, {
-  namespace: "core:wallet",
+export const guildStore = new ObjectStorage<GuildAccount | null>(null, {
+  namespace: "core:guild",
   areaName: "local",
 });
 
@@ -37,7 +37,7 @@ export type GetNetwork = (networkId: string) => Promise<Network>;
 
 export class Guild {
   constructor(
-    private readonly guildStore: IObjectStorage<BaseGuildAccount | null>,
+    private readonly guildStore: IObjectStorage<GuildAccount | null>,
     private readonly sessionStore: IObjectStorage<WalletSession | null>
   ) {}
 
@@ -63,29 +63,38 @@ export class Guild {
   }
 
   public async addAccount(
-    address: string
-  ): Promise<{ account: BaseGuildAccount }> {
+    address: string,
+    accountAddress: string,
+    networkId: string,
+    network: Network,
+    walletProvider: string
+  ): Promise<{ account: GuildAccount }> {
     const session = await this.sessionStore.get();
     if (!this.isSessionOpen() || !session) {
       throw Error("no open session");
     }
 
-    const account: BaseGuildAccount = {
+    const account: GuildAccount = {
       address: address,
-      networkId: "",
+      account: accountAddress,
+      networkId: networkId,
+      network: network,
+      walletProvider: walletProvider,
     };
 
     await this.guildStore.set(account);
 
+    console.log(account);
+
     return { account };
   }
 
-  public async getAccount(): Promise<BaseGuildAccount> {
+  public async getAccount(): Promise<GuildAccount | null> {
     const account = await this.guildStore.get();
     return account;
   }
 
-  public async getSelectedAccount(): Promise<BaseGuildAccount | undefined> {
+  public async getSelectedAccount(): Promise<GuildAccount | undefined | null> {
     if (!this.isSessionOpen()) {
       return;
     }

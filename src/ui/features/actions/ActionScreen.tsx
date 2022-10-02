@@ -1,4 +1,4 @@
-import { FC, useCallback } from "react";
+import { FC, useCallback, useState } from "react";
 
 import { waitForMessage } from "../../../shared/messages";
 import { ApproveTransaction } from "./ApproveTransaction";
@@ -16,8 +16,17 @@ import { connectAccount } from "../../services/backgroundAccounts";
 import { ConnectDappScreen } from "./ConnectDappScreen";
 import { removePreAuthorization } from "../../../shared/preAuthorizations";
 import { formatTransaction } from "./transaction/formatTransaction";
+import { getAccount } from "../../../shared/account/store";
+import { BaseGuildAccount, GuildAccount } from "../../../shared/guild.model";
 
 export const ActionScreen: FC = () => {
+  const [guilds, setGuilds] = useState<any>(null);
+  const getGuilds = async () => {
+    const currentGuilds = await getAccount();
+    return setGuilds(currentGuilds);
+  };
+  getGuilds();
+  console.log(guilds);
   const account = useAccount();
   console.log(account);
   const actions = useActions();
@@ -43,17 +52,17 @@ export const ActionScreen: FC = () => {
       return (
         <ConnectDappScreen
           host={action.payload.host}
-          onConnect={async (selectedAccount: Account) => {
+          onConnect={async (selectedAccount: BaseGuildAccount) => {
             useAppState.setState({ isLoading: true });
             // switch UI to the account that was selected
             useSelectedAccountStore.setState({
               selectedAccount,
             });
-            // switch background wallet to the account that was selected
             connectAccount(selectedAccount);
-            await waitForMessage("CONNECT_ACCOUNT_RES");
+            await waitForMessage("CONNECT_GUILD_RES");
             // continue with approval with selected account
             await approveAction(action);
+            console.log("connecting");
             await waitForMessage("CONNECT_DAPP_RES");
             useAppState.setState({ isLoading: false });
             closePopupIfLastAction();

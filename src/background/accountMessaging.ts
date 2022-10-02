@@ -1,4 +1,4 @@
-import { getAccounts, removeAccount } from "../shared/account/store";
+import { getAccount, removeAccount } from "../shared/account/store";
 import { sendMessageToUi } from "./activeTabs";
 import { HandleMessage, UnhandledMessage } from "./background";
 import { Guild } from "./guild";
@@ -9,15 +9,8 @@ export const handleAccountMessage: HandleMessage<any> = async ({
   sendToTabAndUi,
 }) => {
   switch (msg.type) {
-    case "GET_ACCOUNTS": {
-      return sendToTabAndUi({
-        type: "GET_ACCOUNTS_RES",
-        data: await getAccounts(msg.data?.showHidden ? () => true : undefined),
-      });
-    }
-
     case "CONNECT_GUILD": {
-      await guild.addAccount(msg.data.account.address);
+      // await guild.addAccount(msg.data.account.address);
       return sendToTabAndUi({
         type: "CONNECT_GUILD_RES",
         data: msg.data,
@@ -30,6 +23,21 @@ export const handleAccountMessage: HandleMessage<any> = async ({
         type: "GET_SELECTED_ACCOUNT_RES",
         data: selectedAccount,
       });
+    }
+
+    case "SELECT_ACCOUNT": {
+      try {
+        await guild.addAccount(
+          msg.data.address,
+          msg.data.account,
+          msg.data.networkId,
+          msg.data.network,
+          msg.data.walletProvider
+        );
+        return sendToTabAndUi({ type: "SELECT_ACCOUNT_RES", data: msg });
+      } catch {
+        return sendToTabAndUi({ type: "SELECT_ACCOUNT_REJ", data: msg });
+      }
     }
 
     case "DELETE_ACCOUNT": {

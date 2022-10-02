@@ -57,6 +57,8 @@ export const starknetWindowObject: any = {
 
     const guildAccount = await guildAccountP;
 
+    console.log(guildAccount);
+
     if (!guildAccount) {
       throw Error("No wallet account (should not be possible)");
     }
@@ -64,29 +66,29 @@ export const starknetWindowObject: any = {
     // const { address, network } = guildAccount;
 
     if (starknetVersion === "v4") {
-      const provider = getProvider(guildAccount.provider.baseUrl);
+      const provider = getProvider(guildAccount.network.baseUrl);
       starknet_guildly.starknetJsVersion = "v4";
       starknet_guildly.provider = provider;
       starknet_guildly.account = new GuildAccount(
-        guildAccount.account.address,
+        guildAccount.address,
         provider
       );
     } else {
-      const provider = getProvider(guildAccount.provider.baseUrl);
+      const provider = getProvider(guildAccount.network.baseUrl);
       starknet_guildly.starknetJsVersion = "v3";
       starknet_guildly.provider = provider;
       starknet_guildly.account = new GuildAccount(
-        guildAccount.account.address,
+        guildAccount.address,
         provider
       );
     }
-    starknet_guildly.selectedAddress = guildAccount.account.address;
-    starknet_guildly.chainId = guildAccount.chainId;
+    starknet_guildly.selectedAddress = guildAccount.address;
+    starknet_guildly.chainId = guildAccount.networkId;
     starknet_guildly.isConnected = true;
 
     const installedWallets = await getInstalledWallets();
     const currentWallet = installedWallets.find((obj) => {
-      return obj.id === "argentX";
+      return obj.id === guildAccount.walletProvider;
     });
 
     if (currentWallet?.account?.signer) {

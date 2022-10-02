@@ -1,122 +1,111 @@
-import { useEffect, useState } from "react";
-import { FC } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
-import { P, H1, H2 } from "../../components/Typography";
-import { routes } from "../../routes";
-import {
-  getInstalledWallets,
-  connectWallet,
-  getWallet,
-} from "../../services/getMessages";
-import { Header } from "../../components/Header";
-import { BackButton } from "../../components/BackButton";
-import { storeAccount } from "../../../shared/storage/accounts";
-import Spinner from "../../components/spinner";
+
+import { ColumnCenter } from "../../components/Column";
 import { Account } from "../accounts/Account";
+import {
+  useAccount,
+  useSelectedAccountStore,
+} from "../accounts/accounts.state";
+import { ConfirmPageProps, ConfirmScreen } from "./ConfirmScreen";
+import { DappIcon } from "./DappIcon";
+import { useDappDisplayAttributes } from "./useDappDisplayAttributes";
+import { BaseGuildAccount, GuildAccount } from "../../../shared/guild.model";
 
-const SelectWalletWrapper = styled.div`
-  padding: 40px 40px 24px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+interface ConnectDappProps extends Omit<ConfirmPageProps, "onSubmit"> {
+  onConnect: (selectedAccount: BaseGuildAccount) => void;
+  onDisconnect: (selectedAccount: BaseGuildAccount) => void;
+  host: string;
+}
+
+const DappIconContainer = styled.div`
+  width: 64px;
+  height: 64px;
 `;
 
-const WalletButtonsArea = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+const Title = styled.div`
+  font-weight: 600;
+  font-size: 17px;
+  margin-top: 16px;
+  text-align: center;
 `;
 
-const WalletButton = styled.button`
-  all: unset;
-  color: white;
-  background-color: #293b55;
-  border: 2px #4595d6 solid;
-  display: flex;
-  align-items: center;
-  border-radius: 15px;
-  height: 40px;
-  margin-left: 7.5px;
-  padding: 20px;
-  cursor: pointer;
+const Host = styled.div`
+  font-size: 15px;
+  color: ${({ theme }) => theme.text2};
+  margin-bottom: 8px;
+  text-align: center;
 `;
 
-const WalletButtonIcon = styled.img`
-  width: 50px;
+const HR = styled.div`
+  width: 100%;
+  border-bottom: 1px solid ${({ theme }) => theme.bg2};
+  margin: 16px 0;
 `;
 
-const LoadingIcon = styled.div`
-  height: 50px;
+const SmallText = styled.div`
+  font-size: 13px;
 `;
 
-export const ConnectDappScreen: FC = (
-  onConnect: (selectedAccount: Account) => void,
-  onDisconnect: (selectedAccount: Account) => void,
-  host: string
-) => {
-  const navigate = useNavigate();
+const SelectContainer = styled.div`
+  padding-top: 16px;
+`;
 
-  const [executedGetWallets, setExecutedGetWallets] = useState(false);
-  const [executedConnectWallet, setExecutedConnectWallet] = useState(false);
+const List = styled.ul`
+  font-size: 15px;
+  line-height: 20px;
+  margin-top: 8px;
+  list-style-position: inside;
+`;
 
-  const [wallets, setWallets] = useState(null);
-  const [currentWallet, setCurrentWallet] = useState(null);
+const Bullet = styled.li``;
 
-  if (!executedGetWallets) {
-    const getWallets = async () => {
-      const wallets = await getInstalledWallets().then((msg) => {
-        for (var i = 0; i < msg.data.length; i++) {
-          if (msg.data[i].id == "guildly") {
-            msg.data.splice(i, 1);
-          }
-        }
-        return msg.data;
-      });
-      return setWallets(wallets);
-    };
-    getWallets();
-    setExecutedGetWallets(true);
-  }
+const SmallGreyText = styled.span`
+  font-size: 13px;
+  color: ${({ theme }) => theme.text2};
+  margin-left: 20px;
+`;
 
-  const connectWallet = async (wallet) => {
-    const currentWallet = await connectWallet(wallet).then((msg) => {
-      return msg.data;
-    });
-    console.log(currentWallet);
-    return setCurrentWallet(currentWallet);
-  };
+export const ConnectDappScreen: FC<ConnectDappProps> = ({
+  onConnect: onConnectProp,
+  onDisconnect: onDisconnectProp,
+  onReject: onRejectProp,
+  host,
+  ...rest
+}) => {
+  const selectedAccount = useAccount();
+  console.log(selectedAccount);
+
+  const onConnect = useCallback(() => {
+    selectedAccount && onConnectProp(selectedAccount);
+  }, [onConnectProp, selectedAccount]);
+
+  const dappDisplayAttributes = useDappDisplayAttributes(host);
 
   return (
-    <>
-      <Header>
-        <BackButton />
-      </Header>
-      <SelectWalletWrapper>
-        <H2>Select Wallet</H2>
-        <WalletButtonsArea>
-          {wallets ? (
-            wallets.map((wallet, key) => (
-              <WalletButton
-                key={key}
-                onClick={async () => {
-                  await connectWallet(wallet);
-                  storeAccount(currentWallet);
-                  navigate(routes.selectGuilds());
-                }}
-              >
-                <WalletButtonIcon src={wallet.icon} />
-                <P>Connect to {wallet.name}</P>
-              </WalletButton>
-            ))
-          ) : (
-            <LoadingIcon>
-              <Spinner color={"#a9d1ff"} />
-            </LoadingIcon>
-          )}
-        </WalletButtonsArea>
-      </SelectWalletWrapper>
-    </>
+    <ConfirmScreen
+      confirmButtonText={"Connect"}
+      rejectButtonText={"Reject"}
+      onSubmit={onConnect}
+      onReject={onRejectProp}
+      {...rest}
+    >
+      <ColumnCenter gap={"4px"}>
+        <DappIconContainer>
+          <DappIcon host={host} />
+        </DappIconContainer>
+        <Title>Connect to {dappDisplayAttributes?.title}</Title>
+        <Host>{host}</Host>
+      </ColumnCenter>
+      <HR />
+      <SmallText>This dapp will be able to:</SmallText>
+      <List>
+        <Bullet>Read your wallet address</Bullet>
+        <Bullet>Request transactions</Bullet>{" "}
+        <SmallGreyText>
+          You will still need to sign any new transaction
+        </SmallGreyText>
+      </List>
+    </ConfirmScreen>
   );
 };

@@ -20,13 +20,6 @@ export const useEntryRoute = () => {
         const entry = await determineEntry();
         useAppState.setState({ isLoading: false, isFirstRender: false });
         navigate(entry);
-        // if (IS_DEV) {
-        //   const initialRoute = getInitialHardReloadRoute(query)
-        //   if (initialRoute) {
-        //     await delay(0)
-        //     navigate(initialRoute)
-        //   }
-        // }
       }
     })();
   }, [isFirstRender, navigate]);

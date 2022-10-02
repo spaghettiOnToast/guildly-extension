@@ -5,7 +5,6 @@ import {
   isPreAuthorized,
   preAuthorizeStore,
 } from "../shared/preAuthorizations";
-// import { addTab, sendMessageToHost } from "./activeTabs"
 import { UnhandledMessage } from "./background";
 import { HandleMessage } from "./background";
 import { openUi } from "./openUi";

@@ -43,11 +43,10 @@ export const ApproveTransaction: FC<ApproveTransactionProps> = ({
   // const formattedTransaction = formatTransaction(transactions);
   // console.log(formattedTransaction);
   const { switcherNetworkId } = useAppState();
-  const thisGuild = guildStore[guildStore.length - 1];
-  // if (!selectedAccount) {
-  //   // return <Navigate to={routes.accounts()} />
-  //   return <P>No account connected</P>;
-  // }
+  if (!selectedAccount) {
+    // return <Navigate to={routes.accounts()} />
+    return <P>No account connected</P>;
+  }
 
   return (
     <>
@@ -70,12 +69,12 @@ export const ApproveTransaction: FC<ApproveTransactionProps> = ({
             title="Guild"
             // accountAddress={selectedAccount.address}
             // networkId={selectedAccount.network.id}
-            accountAddress={thisGuild.account.address}
-            networkId={thisGuild.chainId}
+            accountAddress={selectedAccount.address}
+            networkId={selectedAccount.networkId}
           />
           <Field>
             <FieldKey>Network</FieldKey>
-            <FieldValue>{thisGuild.chainId}</FieldValue>
+            <FieldValue>{selectedAccount.networkId}</FieldValue>
           </Field>
         </FieldGroup>
         {/* <P>{selectedAccount?.address}</P> */}

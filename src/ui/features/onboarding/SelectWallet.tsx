@@ -14,6 +14,7 @@ import { BackButton } from "../../components/BackButton";
 import { storeAccount } from "../../../shared/storage/accounts";
 import Spinner from "../../components/spinner";
 import { approveAction, rejectAction } from "../../services/backgroundActions";
+import { getWallets } from "../../../shared/wallets/store";
 
 const SelectWalletWrapper = styled.div`
   padding: 40px 40px 24px;
@@ -59,21 +60,39 @@ export const SelectWallet: FC = () => {
 
   const [wallets, setWallets] = useState(null);
 
+  // if (!executedGetWallets) {
+  //   const getWallets = async () => {
+  //     const wallets = await getInstalledWallets().then((msg) => {
+  //   for (var i = 0; i < msg.data.length; i++) {
+  //     if (msg.data[i].id == "guildly") {
+  //       msg.data.splice(i, 1);
+  //     }
+  //   }
+  //   return msg.data;
+  // });
+  //     return setWallets(wallets);
+  //   };
+  //   getWallets();
+  //   setExecutedGetWallets(true);
+  // }
+
   if (!executedGetWallets) {
-    const getWallets = async () => {
-      const wallets = await getInstalledWallets().then((msg) => {
-        for (var i = 0; i < msg.data.length; i++) {
-          if (msg.data[i].id == "guildly") {
-            msg.data.splice(i, 1);
+    const getInstalledWallets = async () => {
+      const wallets = await getWallets().then((data) => {
+        for (var i = 0; i < data.length; i++) {
+          if (data[i].id == "guildly") {
+            data.splice(i, 1);
           }
         }
-        return msg.data;
+        return data;
       });
       return setWallets(wallets);
     };
-    getWallets();
+    getInstalledWallets();
     setExecutedGetWallets(true);
   }
+
+  console.log(wallets);
 
   return (
     <>

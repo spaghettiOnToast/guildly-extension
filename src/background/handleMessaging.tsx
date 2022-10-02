@@ -8,6 +8,7 @@ import { HandleMessage, UnhandledMessage } from "./background";
 import { sendMessageToCurrentTab } from "./activeTabs";
 import { openUi } from "./openUi";
 import { addTab } from "./activeTabs";
+import { setWallets } from "../shared/wallets/store";
 
 export const handleMessage: any = async ({
   msg,
@@ -18,6 +19,7 @@ export const handleMessage: any = async ({
   const { actionQueue } = background;
   switch (msg.type) {
     case "INSTALLED_WALLETS": {
+      setWallets(msg.data);
       return sendToTabAndUi({
         type: "INSTALLED_WALLETS_RES",
         data: msg,
@@ -27,7 +29,10 @@ export const handleMessage: any = async ({
       return sendToTabAndUi({ type: "GET_INSTALLED_WALLETS_RES" });
     }
     case "CONNECT_WALLET": {
-      return sendToTabAndUi({ type: "CONNECT_WALLET_RES", data: msg.data });
+      return sendMessageToCurrentTab({
+        type: "CONNECT_WALLET_RES",
+        data: msg.data,
+      });
     }
     case "CONNECTED_WALLET": {
       return sendToTabAndUi({ type: "CONNECTED_WALLET_RES", data: msg.data });

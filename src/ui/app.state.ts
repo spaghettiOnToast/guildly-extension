@@ -17,16 +17,16 @@ export const useAppState = create<State>(() => ({
   isFirstRender: true,
 }));
 
-// export const useLoadingProgress = () => {
-//   const [progress, setProgress] = useState<number>()
+export const useLoadingProgress = () => {
+  const [progress, setProgress] = useState<number>();
 
-//   useEffect(() => {
-//     messageStream.subscribe(([message]) => {
-//       if (message.type === "LOADING_PROGRESS") {
-//         setProgress(message.data >= 1 ? undefined : message.data)
-//       }
-//     })
-//   }, [])
+  useEffect(() => {
+    messageStream.subscribe(([message]) => {
+      if (message.type === "LOADING_PROGRESS") {
+        setProgress(message.data >= 1 ? undefined : message.data);
+      }
+    });
+  }, []);
 
-//   return { progress, clearProgress: () => setProgress(undefined) }
-// }
+  return { progress, clearProgress: () => setProgress(undefined) };
+};

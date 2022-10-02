@@ -33,6 +33,7 @@ import {
   getWallet,
 } from "../../services/getMessages";
 import cloneDeep from "lodash.clonedeep";
+import { getAccount } from "../../../shared/account/store";
 
 const SelectGuildsWrapper = styled.div`
   padding: 40px 40px 24px;
@@ -84,10 +85,31 @@ const LoadingIcon = styled.div`
   height: 50px;
 `;
 
-export const SelectGuild: FC = () => {
-  const navigate = useNavigate();
+export const SwitchGuild: FC = () => {
+  const [account, setAccount] = useState<any>(null);
+  const [executedGetAccount, setExecutedGetAccount] = useState<any>(null);
 
-  console.log(accountStore);
+  if (!executedGetAccount) {
+    const getSelectedAccount = async () => {
+      const account = await getAccount().then((data) => {
+        return data;
+      });
+      console.log(account);
+      return setAccount(account);
+    };
+    getSelectedAccount();
+    setExecutedGetAccount(true);
+  }
+  console.log(account);
+
+  const formatAccount = account
+    ? account
+    : {
+        address: "",
+        account: "",
+        network: "",
+      };
+  const navigate = useNavigate();
 
   const {
     loading: accountGuildLoading,
@@ -100,9 +122,7 @@ export const SelectGuild: FC = () => {
       certificate: indexAddress(
         deploymentsConfig["networks"]["goerli"]["guild_certificate"]
       ),
-      account: accountStore
-        ? accountStore[accountStore.length - 1].account.address
-        : "0x0",
+      account: formatAccount.account,
     },
     pollInterval: 10000,
   });
@@ -168,16 +188,15 @@ export const SelectGuild: FC = () => {
                 <GuildButton
                   key={key}
                   onClick={async () => {
-                    const currentAccount =
-                      accountStore[accountStore.length - 1];
+                    const currentAccount = formatAccount;
                     await startSession();
                     // selectAccount(currentGuild);
                     selectAccount({
                       address: guild.arguments[2].value.toLowerCase(),
-                      account: currentAccount.account.address,
+                      account: currentAccount.account,
                       networkId: currentAccount.chainId,
-                      network: currentAccount.provider,
-                      walletProvider: currentAccount.id,
+                      network: currentAccount.network,
+                      walletProvider: currentAccount.walletProvider,
                     });
                     navigate(routes.home());
                   }}

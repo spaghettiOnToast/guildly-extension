@@ -29,12 +29,8 @@ export const mapWalletAccountsToAccounts = (
   );
 };
 
-export const useAccount = ({} = {}) => {
+export const useAccount = () => {
   const account = useObjectStorage(accountStore);
-  // const newAccount = new Account({
-  //   account: account?.address,
-  //   network: account.networkId,
-  // });
   return account;
 };
 

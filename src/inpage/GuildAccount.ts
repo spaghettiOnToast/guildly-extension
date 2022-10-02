@@ -36,8 +36,6 @@ export class GuildAccount extends Account {
     );
     sendMessage({ type: "OPEN_UI" });
 
-    console.log("here");
-
     const result = await Promise.race([
       waitForMessage(
         "TRANSACTION_SUBMITTED",

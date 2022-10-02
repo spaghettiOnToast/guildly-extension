@@ -39,5 +39,5 @@ export const routes = {
   selectWallets: route("/wallet"),
   selectGuilds: route("/guilds"),
   home: route("/home"),
-  guilds: route("/guilds"),
+  guilds: route("/switchGuild"),
 };

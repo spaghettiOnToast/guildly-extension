@@ -11,15 +11,15 @@ export const createNewAccount = async (networkId: string) => {
   ]);
 };
 
-export const getLastSelectedAccount = async () => {
+export const getSelectedAccount = async () => {
   sendMessage({ type: "GET_SELECTED_ACCOUNT" });
   return waitForMessage("GET_SELECTED_ACCOUNT_RES");
 };
 
-export const getAccounts = async (showHidden = false) => {
-  sendMessage({ type: "GET_ACCOUNTS", data: { showHidden } });
-  return waitForMessage("GET_ACCOUNTS_RES");
-};
+// export const getAccounts = async (showHidden = false) => {
+//   sendMessage({ type: "GET_ACCOUNTS", data: { showHidden } });
+//   return waitForMessage("GET_ACCOUNTS_RES");
+// };
 
 export const accountsOnNetwork = (
   accounts: WalletAccount[],
@@ -31,6 +31,14 @@ export const connectAccount = (guildAccount: any) => {
     type: "CONNECT_GUILD",
     data: guildAccount,
   });
+};
+
+export const selectAccount = (guildAccount: any) => {
+  sendMessage({
+    type: "SELECT_ACCOUNT",
+    data: guildAccount,
+  });
+  return waitForMessage("SELECT_ACCOUNT_RES");
 };
 
 export const deleteAccount = async (address: string, networkId: string) => {

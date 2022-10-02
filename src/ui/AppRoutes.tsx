@@ -2,6 +2,7 @@ import { FC, useEffect, useState } from "react";
 import { Outlet, Route, Routes } from "react-router-dom";
 import styled from "styled-components";
 
+import { useAppState } from "./app.state";
 import { routes } from "./routes";
 import { actionStore } from "../shared/storage/actionStore";
 import { useActions } from "./features/actions/action.state";
@@ -10,7 +11,9 @@ import { SelectWallet } from "./features/onboarding/SelectWallet";
 import { SelectGuild } from "./features/onboarding/SelectGuild";
 import { WelcomeScreen } from "./features/onboarding/WelcomeScreen";
 import { ActionScreen } from "./features/actions/ActionScreen";
-import { SettingsScreen } from "./features/settings/SettingsScreen";
+// import { SettingsScreen } from "./features/settings/SettingsScreen";
+import { LoadingScreen } from "./features/actions/LoadingScreen";
+import { SwitchGuild } from "./features/guild/SwitchGuild";
 
 import { Home } from "./features/guild/Home";
 
@@ -48,13 +51,21 @@ const onboardRoutes = (
   </>
 );
 
-const guildRoutes = <Route path={routes.home.path} element={<Home />} />;
+const guildRoutes = (
+  <>
+    <Route path={routes.home.path} element={<Home />} />
+    <Route path={routes.guilds.path} element={<SwitchGuild />} />
+  </>
+);
 
 export const AppRoutes: FC = () => {
   useEntryRoute();
   const actions = useActions();
+  const { isLoading } = useAppState();
 
-  console.log(actions[0]);
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <Routes>

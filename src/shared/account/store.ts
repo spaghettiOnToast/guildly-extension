@@ -7,10 +7,10 @@ import { getAccountSelector, withoutHiddenSelector } from "./selectors";
 import { deserialize, serialize } from "./serialize";
 
 export const accountStore = new ObjectStorage<BaseGuildAccount | null>(null, {
-  namespace: "core:accounts",
+  namespace: "core:guild",
 });
 
-export async function getAccounts(): Promise<BaseGuildAccount | null> {
+export async function getAccount(): Promise<BaseGuildAccount | null> {
   return accountStore.get();
 }
 

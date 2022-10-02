@@ -11,6 +11,7 @@ import {
 import { Header } from "../../components/Header";
 import { H2 } from "../../components/Typography";
 import { Account } from "../accounts/Account";
+import { GuildAccount } from "../../../shared/guild.model";
 import { ProfilePicture } from "../guild/ProfilePicture";
 import { getImage } from "../getImage";
 
@@ -32,7 +33,7 @@ const ConfirmScreenWrapper = styled.form<{
 export interface ConfirmPageProps {
   onSubmit?: (e: FormEvent<HTMLFormElement>) => void;
   onReject?: () => void;
-  selectedAccount?: Account;
+  selectedAccount?: GuildAccount;
 }
 
 interface ConfirmScreenProps extends ConfirmPageProps {

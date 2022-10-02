@@ -37,7 +37,6 @@ export function useObjectStorage<T>(storage: IObjectStorage<T>): T {
   const [value, setValue] = useState<T>(
     swrCacheProvider.get(storage.namespace) ?? storage.defaults
   );
-
   const set = useCallback(
     (value: T) => {
       swrCacheProvider.set(storage.namespace, value);

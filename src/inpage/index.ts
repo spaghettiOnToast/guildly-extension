@@ -46,8 +46,28 @@ function attach() {
   }
 }
 
+const getWallets = async () => {
+  const starknetWindows = await getInstalledWallets();
+  const wallets = [];
+  for (var i = 0; i < starknetWindows.length; i++) {
+    wallets[i] = {
+      id: starknetWindows[i].id,
+      name: starknetWindows[i].name,
+      version: starknetWindows[i].version,
+      icon: starknetWindows[i].icon,
+      selectedAddress: starknetWindows[i].selectedAddress,
+    };
+  }
+  window.postMessage({
+    type: "INSTALLED_WALLETS",
+    data: wallets,
+    extensionId: extensionId,
+  });
+};
+
 function attachHandler() {
   attach();
+  getWallets();
   setTimeout(attach, 100);
 }
 attachHandler();
@@ -64,6 +84,7 @@ window.addEventListener("message", async (event: any) => {
     return;
   }
   if (event.data.type === "GET_INSTALLED_WALLETS_RES") {
+    console.log("here");
     const starknetWindows = await getInstalledWallets();
     const wallets = [];
     for (var i = 0; i < starknetWindows.length; i++) {
@@ -85,7 +106,6 @@ window.addEventListener("message", async (event: any) => {
     const currentWallet = installedWallets.find((obj) => {
       return obj.id === event.data.data.id;
     });
-    console.log(currentWallet);
     await currentWallet?.enable();
     const wallet = {
       account: {
@@ -157,10 +177,11 @@ window.addEventListener("message", async (event: any) => {
       }
     }
   } else if (event.data.type === "FORWARD_TRANSACTION") {
-    if (event.data.data?.wallet && event.data.data?.wallet == "argentx") {
+    console.log(event.data);
+    if (event.data.data?.wallet) {
       const installedWallets = await getInstalledWallets();
       const currentWallet = installedWallets.find((obj) => {
-        return obj.id === "argentX";
+        return obj.id === event.data.data?.wallet;
       });
       try {
         const result = await currentWallet?.account.execute(
