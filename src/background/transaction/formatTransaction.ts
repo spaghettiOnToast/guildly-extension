@@ -1,22 +1,25 @@
 import { isArray } from "lodash-es";
 import { Call } from "starknet";
 import { getSelectorFromName } from "starknet/dist/utils/hash";
+import { transformCallsToMulticallArrays } from "starknet/utils/transaction";
+import { padAddress } from "../../ui/utils/address";
 
 export const formatTransaction = (guild: any, transactions: any) => {
   const transactionsArray: Call[] = isArray(transactions)
     ? transactions
     : [transactions];
   const guildAddress = guild;
-  const newTransactionArray = <any[]>[];
-  for (var i = 0; i < transactionsArray.length; i++) {
-    newTransactionArray.push(transactionsArray[i].contractAddress);
-    newTransactionArray.push(
-      getSelectorFromName(transactionsArray[i].entrypoint)
-    );
-    newTransactionArray.push(...[transactionsArray[i].calldata]);
-  }
+  const { callArray, calldata } =
+    transformCallsToMulticallArrays(transactionsArray);
+  const callArrayValues = Object.values(...callArray);
   const formattedTransaction = {
-    calldata: newTransactionArray,
+    calldata: [
+      callArray.length.toString(),
+      ...callArrayValues,
+      calldata.length.toString(),
+      ...calldata,
+      "0",
+    ],
     entrypoint: "execute_transactions",
     contractAddress: guildAddress,
   };

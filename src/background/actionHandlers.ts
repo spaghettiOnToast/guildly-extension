@@ -39,11 +39,11 @@ export const handleActionApproval = async (
 
     case "TRANSACTION": {
       const selectedAccount = await guild.getSelectedAccount();
+      console.log(action.payload.transactions);
       action.payload.transactions = formatTransaction(
         selectedAccount?.address,
         action.payload.transactions
       );
-      console.log(selectedAccount);
       try {
         sendToTabAndUi({
           type: "FORWARD_TRANSACTION",
