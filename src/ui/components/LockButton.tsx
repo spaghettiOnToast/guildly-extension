@@ -12,7 +12,10 @@ interface BackButtonProps {
 
 export const LockButton: FC<BackButtonProps> = (props) => {
   const navigate = useNavigate();
-  const onClick = () => (props.to ? navigate(props.to) : stopSession());
+  const onClick = () => {
+    props.to ? navigate(props.to) : null;
+    stopSession();
+  };
 
   return (
     <IconButton
