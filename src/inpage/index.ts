@@ -10,7 +10,13 @@ import { disconnectAccount } from "./account";
 import { getProvider } from "../shared/network/provider";
 import { GuildAccount } from "./GuildAccount";
 import { assertNever } from "./../ui/services/assertNever";
-import { useStarknetTransactionManager } from "@starknet-react/core";
+import {
+  useContract,
+  useStarknetCall,
+  useStarknetTransactionManager,
+} from "@starknet-react/core";
+import GuildContract from "../abis/guild_contract.json";
+import { Abi } from "starknet";
 
 function attach() {
   try {
@@ -84,7 +90,6 @@ window.addEventListener("message", async (event: any) => {
     return;
   }
   if (event.data.type === "GET_INSTALLED_WALLETS_RES") {
-    console.log("here");
     const starknetWindows = await getInstalledWallets();
     const wallets = [];
     for (var i = 0; i < starknetWindows.length; i++) {
@@ -150,7 +155,6 @@ window.addEventListener("message", async (event: any) => {
         starknet_guildly.chainId = guildAccount.account.chainId;
         starknet_guildly.provider = guildAccount.account.provider;
         starknet_guildly.account = guildAccount.account;
-        console.log("did this");
         for (const userEvent of userEventHandlers) {
           if (userEvent.type === "accountsChanged") {
             userEvent.handler([guildAccount.account.address]);
@@ -160,7 +164,6 @@ window.addEventListener("message", async (event: any) => {
             assertNever(userEvent);
           }
         }
-        console.log("and that");
       }
     }
   } else if (event.data.type === "DISCONNECT_ACCOUNT") {
@@ -177,12 +180,12 @@ window.addEventListener("message", async (event: any) => {
       }
     }
   } else if (event.data.type === "FORWARD_TRANSACTION") {
-    console.log(event.data);
     if (event.data.data?.wallet) {
       const installedWallets = await getInstalledWallets();
       const currentWallet = installedWallets.find((obj) => {
         return obj.id === event.data.data?.wallet;
       });
+      console.log(currentWallet);
       try {
         const result = await currentWallet?.account.execute(
           event.data.data.payload.transactions
@@ -197,5 +200,47 @@ window.addEventListener("message", async (event: any) => {
         console.log(e);
       }
     }
+  } else if (event.data.type == "GET_NONCE") {
+    console.log("nonce");
+    const installedWallets = await getInstalledWallets();
+    const currentWallet = installedWallets.find((obj) => {
+      return obj.id === event.data.data?.wallet;
+    });
+    // try {
+    const result = await currentWallet?.provider.callContract(
+      {
+        contractAddress: event.data.data.guildAddress,
+        entrypoint: "get_nonce",
+        calldata: [],
+      },
+      {
+        blockIdentifier: "pending",
+      }
+    );
+    console.log(result);
+    window.postMessage({
+      type: "GET_NONCE_RES",
+      data: result,
+      extensionId: extensionId,
+    });
+    // } catch (e) {
+    //   console.log(e);
+    // }
+    // const output = event.data.data.toString(16);
+    // const { contract: guildContract } = useContract({
+    //   abi: GuildContract as Abi,
+    //   address: /^0x/.test(output) ? output : "0x" + output,
+    // });
+    // const { data: nonceResult } = useStarknetCall({
+    //   contract: guildContract,
+    //   method: "get_nonce",
+    //   args: [],
+    // });
+    // console.log(nonceResult);
+    // window.postMessage({
+    //   type: "GET_NONCE_RES",
+    //   data: nonceResult,
+    //   extensionId: extensionId,
+    // });
   }
 });

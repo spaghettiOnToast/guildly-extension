@@ -38,7 +38,9 @@ type WalletsMessage =
   | { type: "GET_SELECTED_ACCOUNT" }
   | { type: "SELECT_ACCOUNT"; data: any }
   | { type: "SELECT_ACCOUNT_RES"; data: any }
-  | { type: "SELECT_ACCOUNT_REJ"; data: any };
+  | { type: "SELECT_ACCOUNT_REJ"; data: any }
+  | { type: "GET_NONCE"; data: any }
+  | { type: "GET_NONCE_RES"; data: any };
 
 export type MessageType =
   | WalletsMessage
