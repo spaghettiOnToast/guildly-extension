@@ -27,6 +27,7 @@ Now you need to load the locally built chrome extension into your browser, by lo
 
 ## Note
 
-Currently the browser extension is in a non-stable state. The first guild connection and transaction will work, however further interaction will break it.
+A few known issues/bugs in the extension:
 
-In order to reset, remove it from chrome://extensions, then follow the same steps above to add it again.
+- After installing the extension, will need to refresh the current browser you are on in order for Guildly to be recognised when connecting.
+- When connecting to your guild directly through the extension your address may not appear the first time. Closing and re-opening will show it.
