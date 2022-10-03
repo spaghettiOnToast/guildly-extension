@@ -1,5 +1,11 @@
 # Guildly Extension
 
+## Introduction
+
+Guildly is a platform to create, manage and interact with multiplayer smart accounts on Starknet. Players can share assets, game state and make decisions together when playing any game or interacting with any contract.
+
+[Guildly Alpha](https://alpha.guildly.xyz) is currently the place to manage guilds, while this extension connects game state of guilds and handles transactions on any dapp. You will need to become a member of a guild in order to access the extension.
+
 ## 👩🏾‍💻 Development
 
 To contribute to this repository please read the contributing guidelines first.
