@@ -27,7 +27,6 @@ Now you need to load the locally built chrome extension into your browser, by lo
 
 ## Note
 
-A few known issues/bugs in the extension:
+A few known issues:
 
 - After installing the extension, will need to refresh the current browser you are on in order for Guildly to be recognised when connecting.
-- When connecting to your guild directly through the extension your address may not appear the first time. Closing and re-opening will show it.

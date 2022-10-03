@@ -29,7 +29,7 @@ export const handleMessage: any = async ({
       return sendToTabAndUi({ type: "GET_INSTALLED_WALLETS_RES" });
     }
     case "CONNECT_WALLET": {
-      return sendMessageToCurrentTab({
+      return sendToTabAndUi({
         type: "CONNECT_WALLET_RES",
         data: msg.data,
       });

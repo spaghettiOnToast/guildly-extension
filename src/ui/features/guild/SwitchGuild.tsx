@@ -191,7 +191,7 @@ export const SwitchGuild: FC = () => {
                     const currentAccount = formatAccount;
                     await startSession();
                     // selectAccount(currentGuild);
-                    selectAccount({
+                    await selectAccount({
                       address: guild.arguments[2].value.toLowerCase(),
                       account: currentAccount.account,
                       networkId: currentAccount.chainId,

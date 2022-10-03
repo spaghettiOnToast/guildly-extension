@@ -172,7 +172,7 @@ export const SelectGuild: FC = () => {
                       accountStore[accountStore.length - 1];
                     await startSession();
                     // selectAccount(currentGuild);
-                    selectAccount({
+                    await selectAccount({
                       address: guild.arguments[2].value.toLowerCase(),
                       account: currentAccount.account.address,
                       networkId: currentAccount.chainId,

@@ -38,17 +38,18 @@ export const Home: FC = () => {
   const [account, setAccount] = useState<any>(null);
   const [executedGetAccount, setExecutedGetAccount] = useState<any>(null);
 
-  if (!executedGetAccount) {
-    const getSelectedAccount = async () => {
-      const account = await getAccount().then((data) => {
-        return data;
-      });
-      console.log(account);
-      return setAccount(account);
-    };
+  useEffect(() => {
     getSelectedAccount();
     setExecutedGetAccount(true);
-  }
+  }, [executedGetAccount]);
+
+  const getSelectedAccount = async () => {
+    const account = await getAccount().then((data) => {
+      return data;
+    });
+    console.log(account);
+    return setAccount(account);
+  };
   console.log(account);
 
   const formatAccount = account

@@ -86,6 +86,7 @@ export async function sendMessageToActiveTabsAndUi(
   message: MessageType,
   additionalTargets: Array<number | undefined> = []
 ) {
+  sendMessageToCurrentTab(message);
   await sendMessageToUi(message);
   await sendMessageToActiveTabs(message, additionalTargets);
 }
