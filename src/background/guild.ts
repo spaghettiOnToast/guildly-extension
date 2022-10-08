@@ -51,7 +51,6 @@ export class Guild {
     if (session) {
       return true;
     }
-    console.log(session);
 
     try {
       await this.setSession("123");
@@ -84,8 +83,6 @@ export class Guild {
 
     await this.guildStore.set(account);
 
-    console.log(account);
-
     return { account };
   }
 
@@ -104,8 +101,6 @@ export class Guild {
 
   public async lock() {
     const session = await this.sessionStore.get();
-    console.log(session);
-    console.log(this.sessionStore.defaults);
     await this.sessionStore.set(this.sessionStore.defaults);
   }
 

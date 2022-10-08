@@ -19,7 +19,6 @@ chrome.runtime.onMessage.addListener((obj, sender, response) => {
 });
 
 window.addEventListener("message", function (event: any) {
-  console.log(event.data);
   if (
     !event.data?.forwarded &&
     event.data?.extensionId === guildlyExtensionId
