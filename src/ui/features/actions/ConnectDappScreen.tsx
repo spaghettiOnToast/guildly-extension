@@ -74,7 +74,6 @@ export const ConnectDappScreen: FC<ConnectDappProps> = ({
   ...rest
 }) => {
   const selectedAccount = useAccount();
-  console.log(selectedAccount);
 
   const onConnect = useCallback(() => {
     selectedAccount && onConnectProp(selectedAccount);

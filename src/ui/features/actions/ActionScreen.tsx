@@ -26,9 +26,7 @@ export const ActionScreen: FC = () => {
     return setGuilds(currentGuilds);
   };
   getGuilds();
-  console.log(guilds);
   const account = useAccount();
-  console.log(account);
   const actions = useActions();
   const [action] = actions;
   const isLastAction = actions.length === 1;
@@ -62,7 +60,6 @@ export const ActionScreen: FC = () => {
             await waitForMessage("CONNECT_GUILD_RES");
             // continue with approval with selected account
             await approveAction(action);
-            console.log("connecting");
             await waitForMessage("CONNECT_DAPP_RES");
             useAppState.setState({ isLoading: false });
             closePopupIfLastAction();

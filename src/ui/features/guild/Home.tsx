@@ -47,10 +47,8 @@ export const Home: FC = () => {
     const account = await getAccount().then((data) => {
       return data;
     });
-    console.log(account);
     return setAccount(account);
   };
-  console.log(account);
 
   const formatAccount = account
     ? account

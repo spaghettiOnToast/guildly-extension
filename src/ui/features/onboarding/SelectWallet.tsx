@@ -92,8 +92,6 @@ export const SelectWallet: FC = () => {
     setExecutedGetWallets(true);
   }
 
-  console.log(wallets);
-
   return (
     <>
       <Header>

@@ -54,7 +54,6 @@ export const handleMessage: any = async ({
       await openUi();
     }
     // case "TRANSACTION_FORWARDED": {
-    //   console.log("hey again");
     //   return sendToTabAndUi({
     //     type: "TRANSACTION_FORWARDED_RES",
     //     data: msg.data,

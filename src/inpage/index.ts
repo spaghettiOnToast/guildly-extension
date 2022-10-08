@@ -185,12 +185,10 @@ window.addEventListener("message", async (event: any) => {
       const currentWallet = installedWallets.find((obj) => {
         return obj.id === event.data.data?.wallet;
       });
-      console.log(currentWallet);
       try {
         const result = await currentWallet?.account.execute(
           event.data.data.payload.transactions
         );
-        console.log(result);
         window.postMessage({
           type: "TRANSACTION_FORWARDED",
           data: result,
@@ -201,7 +199,6 @@ window.addEventListener("message", async (event: any) => {
       }
     }
   } else if (event.data.type == "GET_NONCE") {
-    console.log("nonce");
     const installedWallets = await getInstalledWallets();
     const currentWallet = installedWallets.find((obj) => {
       return obj.id === event.data.data?.wallet;
@@ -217,7 +214,6 @@ window.addEventListener("message", async (event: any) => {
         blockIdentifier: "pending",
       }
     );
-    console.log(result);
     window.postMessage({
       type: "GET_NONCE_RES",
       data: result,

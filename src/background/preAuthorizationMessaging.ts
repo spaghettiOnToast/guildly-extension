@@ -63,7 +63,6 @@ export const handlePreAuthorizationMessage: HandleMessage<
         });
       }
 
-      console.log(isAuthorized);
       if (isAuthorized && selectedAccount?.address) {
         return sendToTabAndUi({
           type: "CONNECT_GUILD_RES",

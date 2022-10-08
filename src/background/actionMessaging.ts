@@ -30,7 +30,6 @@ export const handleActionMessage: any = async ({
         background,
         sendToTabAndUi
       );
-      console.log(resultMessage);
       if (resultMessage) {
         sendToTabAndUi(resultMessage);
       }

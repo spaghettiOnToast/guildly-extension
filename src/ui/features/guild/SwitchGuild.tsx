@@ -94,13 +94,11 @@ export const SwitchGuild: FC = () => {
       const account = await getAccount().then((data) => {
         return data;
       });
-      console.log(account);
       return setAccount(account);
     };
     getSelectedAccount();
     setExecutedGetAccount(true);
   }
-  console.log(account);
 
   const formatAccount = account
     ? account

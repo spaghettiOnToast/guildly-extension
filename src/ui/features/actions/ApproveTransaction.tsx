@@ -39,9 +39,6 @@ export const ApproveTransaction: FC<ApproveTransactionProps> = ({
   actionHash,
   ...props
 }) => {
-  console.log(selectedAccount);
-  // const formattedTransaction = formatTransaction(transactions);
-  // console.log(formattedTransaction);
   const { switcherNetworkId } = useAppState();
   if (!selectedAccount) {
     // return <Navigate to={routes.accounts()} />

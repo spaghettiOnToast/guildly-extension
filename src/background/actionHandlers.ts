@@ -39,7 +39,6 @@ export const handleActionApproval = async (
 
     case "TRANSACTION": {
       const selectedAccount = await guild.getSelectedAccount();
-      console.log(action.payload.transactions);
       sendToTabAndUi({
         type: "GET_NONCE",
         data: {
@@ -48,7 +47,6 @@ export const handleActionApproval = async (
         },
       });
       const nonce = await waitForMessage("GET_NONCE_RES");
-      console.log(nonce);
       action.payload.transactions = formatTransaction(
         selectedAccount?.address,
         action.payload.transactions,

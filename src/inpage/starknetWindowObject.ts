@@ -57,8 +57,6 @@ export const starknetWindowObject: any = {
 
     const guildAccount = await guildAccountP;
 
-    console.log(guildAccount);
-
     if (!guildAccount) {
       throw Error("No wallet account (should not be possible)");
     }
@@ -94,8 +92,6 @@ export const starknetWindowObject: any = {
     if (currentWallet?.account?.signer) {
       starknet_guildly.account.signer = currentWallet.account.signer;
     }
-
-    console.log(starknet_guildly);
 
     return [starknet_guildly.account?.address];
   },

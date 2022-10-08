@@ -87,8 +87,6 @@ const LoadingIcon = styled.div`
 export const SelectGuild: FC = () => {
   const navigate = useNavigate();
 
-  console.log(accountStore);
-
   const {
     loading: accountGuildLoading,
     error: accountGuildsError,
